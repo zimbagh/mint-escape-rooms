@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Compiler Raum</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="compiler">
+
+  <!-- Zurück-Link -->
+  <a href="index.html" class="back-link">← Zurück zur Übersicht</a>
+
+  <h1>Compiler-Raum</h1>
+  
+  <!-- Story Text -->
+  <p>
+    Du betrittst einen Raum voller flackernder Bildschirme.
+    Auf jedem laufen verschlüsselte Codezeilen in Endlosschleife.
+  </p>
+  <p>Ein Terminal zeigt dir eine Nachricht:</p>
+
+  <!-- Story-Box -->
+  <div class="story-box">
+    „Der Quellcode wurde verschlüsselt, um das System vor unerlaubtem Zugriff zu schützen.
+    Nur wer den Code korrekt entschlüsseln kann, darf weiter.“
+  </div>
+
+  <!-- Hinweis -->
+  <p><strong>Hinweis:</strong> Verschlüsselt nach Caesar, A → K</p>
+
+  <!-- Terminal für die Eingabe -->
+  <div class="terminal">
+    <p>Entschlüssele den folgenden Satz:</p>
+    <!-- Verschlüsselter Text -->
+    <blockquote>"Ne uywwcd rsob xsowkvc bkec."</blockquote>
+    <input type="text" id="input" placeholder="Dein entschlüsselter Satz" autocomplete="off">
+    <button onclick="checkAnswer()">Bestätigen</button>
+  </div>
+
+  <!-- Script für Compiler -->
+  <script src="compiler.js"></script>
+  <script src="addkey.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Escape Room</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class = "index">
+
+  <!-- Story-Text -->
+  <h1>Story</h1>
+  <p>Im Jahr 2089 ist die Welt von einer KI namens NEON kontrolliert. Du bist ein ehemaliger Sicherheitsentwickler, der sich heimlich ins Hauptsystem eingeschleust hat, um die künstliche Intelligenz zu deaktivieren. NEON hat dich in einer digitalen Simulation gefangen – bestehend aus fünf Sicherheitsräumen. Nur durch Lösen aller Rätsel kannst du den Ausgang öffnen.</p>
+  <div class="room-grid">
+
+    <!-- Räume -->
+    <div class="room" onclick="location.href='eingang.html'">
+      <h2>Eingangsport</h2>
+    </div>
+  
+    <div class="room" onclick="location.href='compiler.html'">
+      <h2>Compiler Raum</h2>
+    </div>
+  
+    <div class="room" onclick="location.href='kammer.html'">
+      <h2>Verschlüsselte Kammer</h2>
+    </div>
+  
+    <div class="room" onclick="location.href='maschinenraum.html'">
+      <h2>Maschinen Raum</h2>
+    </div>
+  
+    <div class="room" onclick="location.href='steuerzentrale.html'">
+      <h2>Steuerzentrale Raum</h2>
+    </div>
+  
+    <div class="room" onclick="location.href='ausgang.html'">
+      <h2>Ausgang</h2>
+    </div>
+  
+  </div>
+
+  <button onclick="resetGame()">
+    Spiel zurücksetzen
+  </button>
+
+  <script src="resetGame.js"></script>
+
+  
+</body>
+</html>

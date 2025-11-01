@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap-utilities.min.css">
+    <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap-reboot.min.css">
+    <link rel="stylesheet" href="../bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="../rooms/templateroom.css">
+    <link rel="stylesheet" href="../rooms/room-0/room-0.css">
+    <script defer src="../coin.js"></script><!-- update coins-->
+    <script defer src="../countdown.js"></script><!-- update countdown -->
+    <script defer src="../rooms/roomstatus.js"></script><!-- call setRoomStatusDone() in login_validation.js -->
+    <script defer src="../rooms/room-0/validation.js"></script>
+    <title>Escape Room</title>
+</head>
+
+<body>
+    <!-- Navbar mit Zurueck Button -->
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <button type="button" class="btn btn-light" onclick="location.href = '../home.html';">
+                Zurück
+            </button>
+
+            <div class="d-inline-flex flex-column">
+                <div class="d-inline-flex justify-content-end align-items-center">
+                    <i class="bi bi-stopwatch"></i>
+                    <a class="nav-link disabled mx-2" href="../../#" tabindex="-1" aria-disabled="true" id="countdown">--d --h
+                        --m
+                        --s</a>
+                </div>
+
+                <div class="d-inline-flex justify-content-end align-items-center">
+                    <i class="bi bi-coin"></i>
+                    <a class="nav-link disabled mx-2" href="../../#" tabindex="-1" aria-disabled="true" id="coins">--</a>
+                </div>
+            </div>
+
+        </div>
+    </nav>
+    <div class="mx-3">
+        <!-- Flexbox Vertikal -->
+        <div class="d-flex flex-column m-5">
+            <h1>Biologie Room</h1>
+            <p>
+                Du läufst in einen kleinen Raum. Er ist vollgeräumt mit Tischen und allerhand kriminologischem Material
+                wie Mikroskope, Petrischalen und weiterem Equipment, das du mehrfach in den verschiedensten Krimis
+                gesehen hast. Dass es sich um Kriminologie handelt, merkst du an dem großem Bild einer Polizeimarke an
+                der Wand. Als kleines, weiteres Indiz könnte der Umriss einer Person sein, der mit Kreide auf den Boden
+                gemalt wurde. Marmeladenflecken innerhalb des Umrisses sollen wohl Blut darstellen. Wäre auch beinahe
+                überzeugend, wenn das Marmeladenglas nicht direkt neben der Skizze auf dem Boden stehen würde. Oder soll
+                man nur denken, dass es Marmelade ist? Weist das Marmeladenglas auf eine Falsche Fährte? Soll man sich
+                in falscher Sicherheit wiegen, da man vermutet, dass es sich bei den Flecken nur um Marmelade und nicht
+                das letzte Opfer handelt?! Bevor du noch vollkommen verrückt wirst, reißt du deinen Blick weg und
+                schaust auf die Wand hinter dem anthropomorphen Umriss. 4 Türen führen aus dem Zimmer, von der Tür
+                hinter dir mal abgesehen. Vielleicht solltest du noch gehen, solange du noch kannst? Nah, was könnte
+                denn schon passieren? Was ist denn die Aufgabe hier? Türen raten? Wohl kaum. Nach kurzer Suche wirst du
+                fündig, einen beschriebenen Zettel findest du auf einem der Tische. Rote Marmeladenflecke lassen den
+                Zettel an deinen Fingern kleben. Du liest:
+            </p>
+
+            <div class="shadow p-3 mb-2 bg-body rounded">
+                "Willkommen, Detective. Es gab einen Mord, IM PRÄSIDIUM. Ein
+                absolutes Unding. Das Opfer war Marie Türer, eine gute Kollegin und sehr kämpferisch. Es gibt Indizien,
+                dass sie mit dem Täter gekämpft hat und das Blut am Tatort somit gleichermaßen von ihr, sowie dem Täter
+                stammen."
+            </div>
+
+            <p>
+                Du siehst auf. Alles ist in perfekter Ordnung, nichts wurde zerstört, nichts wurde umgekippt. Alles
+                sieht nur etwas staubig aus. Muss wohl ein sehr friedlicher Kampf gewesen sein. Vielleicht war er auch
+                im Nebenzimmer?
+                *
+            </p>
+
+            <div class="shadow p-3 mb-2 bg-body rounded">
+                <p>
+                    "3 Verdächtige wurden Identifiziert und festgenommen. Antonius Zweistein, Barbara Kurie und Dieter
+                    Hawkins. Sie alle wurden in jeweils einem der Nebenzimmer eingesperrt. Ihre Vornamen verraten, wer
+                    wo steckt. Immerhin wissen wir, dass sie alle die Tür selber geschlossen haben. Ebenso haben wir von
+                    allen Verdächtigen und dem Tatort DNS-Proben genommen. Nach einem PCR haben wir eine
+                    Gelelektrophorese an allen DNS-Proben durchgeführt. Die Resultate finden Sie auf einem der Tische
+                    liegend. Können Sie nun bitte bestimmen, wer den Mord begangen hat und die anderen beiden
+                    Unschuldigen freilassen? Vielen Dank und frohen Schaffen.
+                </p>
+                <p>
+                    P.S.: Wir können leider nicht ausschließen, dass mehrere Personen an dem Mord beteiligt waren.
+                </p>
+                <p>
+                    P.P.S.: Es ist vermutlich nicht die beste Idee einen Mörder freizulassen, also seien Sie sich lieber
+                    sicher mit Ihren Entscheidungen."*
+                </p>
+            </div>
+
+            <p>
+                Auf einem weiteren Tisch findest du den Zettel mit den Gelelektrophorese Resultaten.
+            </p>
+
+            <img src="../images/gelelektrophorese.png">
+            <p>
+                Dein Wissen über dieses Thema ist etwas angerostet. So korrodiert, dass du dir unsicher bist es jemals
+                gewusst zu haben. Obwohl, war das nicht mal Thema einer Biologie-Klausur? Langsam setzt sich allerdings
+                das Getriebe in deinem Kopf in Gang. Träge spuckt dein Gehirn verschiedene Wörter aus, die mehr oder
+                minder passend erscheinen: PCR, Agarose-Gel, DNS. Du wartest ein bisschen, in der Hoffnung einen
+                vollständigen Satz zu erhalten, irgendetwas, was dir helfen könnte. Mit einem Schlag hast du plötzlich
+                wieder alles im Kopf und hörst in der Stimme deiner alten Biologie-Lehrerin:
+            </p>
+            <div class="shadow p-3 mb-2 bg-body rounded">
+                „Bei der Gelelektrophorese trennt man verschiedene, elektrisch geladene, Arten von Molekülen
+                voneinander. Die Moleküle bewegen sich hierbei in einem elektrischen Feld durch ein Gel, welches
+                beispielsweise aus Agarose besteht. Wir werden beispielhaft DNS-Moleküle verwenden. DNS-Moleküle sind
+                negativ geladen. Sie bewegen sich nun von einer Seite des Behälters zur anderen, entlang des
+                elektrischen Feldes, zum Pluspol, der Anode. Das Gel wirkt hierbei als Sieb, da die Moleküle dazu
+                gezwungen sind durch Poren im Gel zu wandern. Dadurch werden sie aufgehalten und größere DNS-Moleküle
+                sind langsamer als kleinere Moleküle, die leichter durch die Poren kommen. Damit können wir verschiedene
+                DNS-Proben auf gleichlange DNS-Segmente untersuchen. Problematisch ist nur, dass wir die DNS nicht sehen
+                können, weshalb wir noch einen weiteren Marker hinzufügen, der mit der DNS wandert, allerdings schneller
+                ist. Sobald dieser Marker das Ende des Behältnisses erreicht, lösen wir das elektrische Feld auf. Dann
+                färben wir die DNS-Moleküle und können sie vergleichen. DNS-Segmente aller Proben mit gleicher Länge
+                befinden sich nun auf etwa gleicher Höhe und erscheinen als Balken, fachsprachlich „Banden“ genannt.
+                Proben, die identische DNS enthalten, werden auch ein identisches Bandenmuster aufweisen.
+                Doch warum besitzen unsere DNS-Proben Segmente mit verschiedener Länge und wie kommen wir überhaupt zu
+                den Proben? Wenn wir DNS haben, die wir mithilfe einer Gelelektrophorese vergleichen wollen, müssen wir
+                sie zuerst mithilfe der Polymerase-Kettenreaktion (PCR) vervielfältigt. Dann verwenden wir verschiedene
+                Restriktionsenzyme, die die DNS an bestimmten Stellen schneiden. Die Länge der entstehenden Segmente
+                unterscheidet sich dann, da sich die DNS verschiedener Menschen unterscheidet. Bindungsstellen für
+                Restriktionsenzyme fallen weg, kommen hinzu oder die Länge der DNS-Segmente zwischen den Schnittstellen
+                unterscheidet sich. Hierbei werden besonders die sogenannten STRs (Short Tandem Repeats) miteinander
+                verglichen, da... .“
+            </div>
+            <p>
+                Wow, du bist schon beeindruckt davon, wie viel Theorie über die Gelelektrophorese behalten hast, doch
+                was genau sollst du jetzt nochmal machen? Zusammengefasst heißt das also, dass die DNS-Proben sich
+                unterscheiden und diese Unterschiede anhand der verschiedenen Bandenmuster erkennbar sind. Doch wer war
+                jetzt der Täter? Seine DNS muss ja am Tatort gewesen sein, ebenso wie die des Opfers. Mal sehen….
+            </p>
+            <div class="container text-center mt-5">
+                <div class="row">
+
+                    <div class="col" onclick="zimmer1()">
+                        <div class="card mb-5" style="width: 18rem;">
+                            <img src="../rooms/room-0/roomdoor.jpg" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <div class="d-inline-flex">
+                                    <h5 class="card-text">Zimmer 1</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col" onclick="zimmer2()">
+                        <div class="card mb-5" style="width: 18rem;">
+                            <img src="../rooms/room-0/roomdoor.jpg" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <div class="d-inline-flex">
+                                    <h5 class="card-text">Zimmer 2</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col" onclick="zimmer3()">
+                        <div class="card mb-5" style="width: 18rem;">
+                            <img src="../rooms/room-0/roomdoor.jpg" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <div class="d-inline-flex">
+                                    <h5 class="card-text">Zimmer 3</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col" onclick="zimmer4()">
+                        <div class="card mb-5" style="width: 18rem;">
+                            <img src="../rooms/room-0/roomdoor.jpg" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <div class="d-inline-flex">
+                                    <h5 class="card-text">Zimmer 4</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <form id="biologieroom-form">
+                <div class="mb-3">
+                    <label for="loesung" class="form-label">Code</label>
+                    <input class="form-control" id="loesung">
+                </div>
+                <button type="submit" class="btn btn-primary" id="submit">Bestätigen</button>
+            </form>
+
+            <!-- Alertbox -->
+            <div id="liveAlertPlaceholder" class="bottom_fixed"></div>
+
+        </div>
+
+        <script>
+            // Pruefe Antwort und gebe ein Alert aus
+            const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+            const alert = (message, type) => {
+                const wrapper = document.createElement('div')
+                wrapper.innerHTML = [
+                    `<div id="alert" class="alert alert-${type} fadeout" role="alert">`,
+                    `${message}`,
+                    `</div>`
+                ].join('')
+                alertPlaceholder.append(wrapper)
+            }
+        </script>
+</body>
+
+</html>

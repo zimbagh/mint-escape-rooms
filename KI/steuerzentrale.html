@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Steuerzentrale</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="steuerzentrale">
+
+  <!-- Zurück-Link -->
+  <a href="index.html" class="back-link">← Zurück zur Übersicht</a>
+
+  <h1>Steuerzentrale</h1>
+  <!-- Story Text -->
+  <p>
+    Die Türen zischen auf – du betrittst den zentralen Kontrollraum von NEON.
+    Monitore flackern, unzählige Datenströme rasen über die Bildschirme.
+    Nur ein letztes Sicherheitssystem blockiert den manuellen Shutdown.
+    Es prüft deine Reaktionsfähigkeit und dein Erinnerungsvermögen:
+    vier entscheidende Zahlen flackern kurz auf – vergisst du sie, bleibt NEON aktiv...
+  </p>
+
+  <!-- Story Box -->
+  <div class="story-box">
+    <p>Merke dir die Zahlenabfolge und gib sie korrekt ein:</p>
+
+    <!-- Terminal für Zahlen Ausgabe -->
+    <div class="terminal">
+      <p id="screenText"></p>
+    </div>
+    
+    <!-- Start button für die Zahlenausgabe -->
+    <button id="startBtn" onclick="startSequence()">Start</button>
+
+    <!-- Eingabefelder für die Zahlen -->
+    <div class="input-group">
+      <input type="number" id="input" placeholder="1. Zahl" autocomplete="off">
+      <input type="number" id="input2" placeholder="2. Zahl" autocomplete="off">
+      <input type="number" id="input3" placeholder="3. Zahl" autocomplete="off">
+    </div>
+    
+    <!-- Button zum Überprüfen der Eingabe -->
+    <button onclick="checkSequence()">Überprüfen</button>
+
+  </div>
+
+  <!-- Script für die Steuerzentrale -->
+  <script src="steuerzentrale.js"></script>
+  <script src="addkey.js"></script>
+</body>
+</html>

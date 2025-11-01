@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Raum: Eingang</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="eingang">
+  
+  <!-- Zurück-Link -->
+  <a href="index.html" class="back-link">← Zurück zur Übersicht</a>
+
+  <h1>Eingangsport</h1>
+
+  <p></p>
+  
+  <!-- Story Text -->
+  <p>
+    Nachdem du in den dunklen Raum trittst, hörst du ein leises Summen, als die Wände langsam von schwachem grünem Licht durchzogen werden.
+  </p>
+  <p>
+    Vor dir öffnet sich ein holografisches Display und eine kalte Stimme ertönt:
+  </p>
+  
+  <!-- Story Box -->
+  <div class="story-box">
+    <p>„Willkommen im Projekt NEON. Du hast das Eingangsterminal erreicht. Doch bevor du fortfahren kannst, musst du beweisen, dass du den Code der Maschinen verstehst. Nur wer in der Sprache der Neuronen spricht, darf eintreten. Hier ist deine erste Herausforderung.“</p>
+  </div>
+
+  <!-- Terminal für die Aufgabe -->
+  <div class="terminal">
+    <p><code>"1010 + 0101 = ?"</code></p>
+  </div>
+
+  <!-- Hinweis -->
+  <p><strong>Hinweis:</strong> Binär in Hexadezimal </p>
+
+  <!-- Eingabefeld für die Antwort -->
+  <input type="text" id="input" placeholder="Deine Antwort" autocomplete="off">
+  <button id="checkBtn" onclick="checkAnswer()">Überprüfen</button>
+
+  <!-- Script für Eingang -->
+  <script src="eingang.js"></script>
+  <script src="addkey.js"></script>
+</body>
+</html> 

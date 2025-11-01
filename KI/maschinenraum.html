@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Maschinenraum</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="maschinenraum">
+
+  <!-- Zurück-Link -->
+  <a href="index.html" class="back-link">← Zurück zur Übersicht</a>
+
+  <!-- Story-Text -->
+  <h1>Maschinenraum</h1>
+    <p>Die Maschine lässt sich nur mit der richtigen Schalterreihenfolge deaktivieren. Acht Farben stehen zur Auswahl – aber nur eine Reihenfolge ist korrekt.</p>
+    <p>Ein Wartungsprotokoll enthält folgende Hinweise:</p>
+    
+    <!-- Story-Box -->
+  <div class="story-box">
+
+    <ol style="text-align: left; max-width: 700px; margin: 1rem auto;">
+      <li><strong>Orange</strong> kommt direkt nach <strong>Gelb</strong>.</li>
+      <li><strong>Blau</strong> steht irgendwann vor <strong>Grün</strong></li>
+      <li>Der <strong>rote</strong> Schalter wird später gedrückt als der <strong>grüne</strong>.</li>
+      <li><strong>Cyan</strong> folgt unmittelbar auf <strong>Rot</strong>.</li>
+      <li><strong>Lila</strong> befindet sich genau zwischen <strong>Cyan</strong> und <strong>Weiß</strong>.</li>
+      <li><strong>Gelb</strong> ist der erste Schalter.</li>
+      <li><strong>Weiß</strong> ist der letzte.</li>
+    </ol>
+
+    <!-- Hinweis -->
+    <p><strong>Drücke die Farb-Schalter in der richtigen Reihenfolge, um die Falle zu deaktivieren:</strong></p>
+  </div>
+
+  <!-- Button-Reihe für die Farben -->
+  <div class="button-row">
+    <div class="button-box"><button class="color-btn" value="red">ROT</button></div>
+    <div class="button-box"><button class="color-btn" value="blue">BLAU</button></div>
+    <div class="button-box"><button class="color-btn" value="green">GRÜN</button></div>
+    <div class="button-box"><button class="color-btn" value="yellow">GELB</button></div>
+    <div class="button-box"><button class="color-btn" value="purple">LILA</button></div>
+    <div class="button-box"><button class="color-btn" value="orange">ORANGE</button></div>
+    <div class="button-box"><button class="color-btn" value="cyan">CYAN</button></div>
+    <div class="button-box"><button class="color-btn" value="white">WEISS</button></div>
+  </div>
+
+  <!-- Reset Button -->
+  <button id="reset-btn">Neu versuchen</button>
+
+  <!-- Script für Maschinenraum -->
+  <script src="maschinenraum.js"></script>
+  <script src="addkey.js"></script>
+</body>
+</html>

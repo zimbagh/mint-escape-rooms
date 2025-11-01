@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Verschlüsselte Kammer</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="addkey.js"></script>
+</head>
+<body class="kammer">
+
+  <!-- Zurück-Link -->
+  <a href="index.html" class="back-link">← Zurück zur Übersicht</a>
+
+  <h1>Verschlüsselte Kammer</h1>
+
+  <!-- Story Text -->
+  <p>Drei digitale Wächter bewachen jeweils eine Tür. Nur einer hat den echten Schlüssel. Die anderen lügen.</p>
+  <div class="story-box">
+    <p><strong>Wächter A sagt:</strong> "Wächter B trägt den echten Schlüssel."</p>
+    <p><strong>Wächter B sagt:</strong> "Ich habe nicht den Schlüssel."</p>
+    <p><strong>Wächter C sagt:</strong> "Wächter A lügt."</p>
+    <p>Nur <strong>einer</strong> der Wächter sagt die Wahrheit. Wer trägt den echten Schlüssel?</p>
+  </div>
+
+  <!-- Boxen für die Antwort -->
+  <div class="door-grid">
+    <div class="kammer-door" onclick="checkDoor('A')">Wächter A</div>
+    <div class="kammer-door" onclick="checkDoor('B')">Wächter B</div>
+    <div class="kammer-door" onclick="checkDoor('C')">Wächter C</div>
+  </div>
+
+  <!-- Script für Kammer -->
+  <script src="kammer.js"></script>
+  <script src="addkey.js"></script>
+
+</body>
+</html>

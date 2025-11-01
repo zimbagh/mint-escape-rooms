@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./bootstrap-5.2.3-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./bootstrap-5.2.3-dist/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="./bootstrap-5.2.3-dist/css/bootstrap-utilities.min.css">
+    <link rel="stylesheet" href="./bootstrap-5.2.3-dist/css/bootstrap-reboot.min.css">
+    <link rel="stylesheet" href="./bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="./home.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <script defer src="./coin.js"></script>
+    <script defer src="./countdown.js"></script>
+    <script defer src="./rooms/roomstatus.js"></script>
+    <script defer src="./home.js"></script>
+    <title>Escape Room</title>
+</head>
+
+<body>
+    <!-- Navbar mit Titel -->
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <h1>Digital Escape Room</h1>
+
+            <div class="d-inline-flex flex-column">
+                <div class="d-inline-flex justify-content-end align-items-center">
+                    <i class="bi bi-stopwatch"></i>
+                    <a class="nav-link disabled mx-2" href="#" tabindex="-1" aria-disabled="true" id="countdown">--d --h
+                        --m
+                        --s</a>
+                </div>
+
+                <div class="d-inline-flex justify-content-end align-items-center">
+                    <a class="nav-link disabled mx-2" href="#" tabindex="-1" aria-disabled="true" id="coins">--</a>
+                </div>
+            </div>
+
+        </div>
+    </nav>
+
+    <div class="m-3">
+        <!-- Flexbox Vertikal -->
+        <div class="d-flex flex-column m-5">
+
+            <h1>Story</h1>
+            <p>
+                Der Morgen beginnt mit Aufregung. Heute ist der wichtigste Tag für Jan und Lisa. Jahrelang haben sie zusammen auf ihren
+                Traum hingearbeitet und heute entscheidet sich, wer den Vertrag der Regierung für den Bau einer Mondbasis bekommt. Zusammen 
+                treten sie gegen ein weiteres Forschungsteam an. In einer Online Konferenz zusammen mit Vertretern der Regierung
+                wollen sie ihre Ergebnisse präsentieren um alle von ihrer Idee zu überzeugen und ihren Traum zur Realität zu machen.
+                Nachdem sie die große und schwere Stahltüre zu ihrer Forschungseinrichtung aufgeschlossen haben, sehen sie sofort das 
+                rote Blinklicht am Ende des Ganges. Ohne zu zögern rennen sie den Gang entlang um in die Zentrale zu kommen, wo sie auf 
+                den flackernden Bildschirmen in großen roten Buchstaben sehen: "SYSTEM COMPROMISED" "Deleting..." und darunter noch eine 
+                verspottende Nachricht: "Viel Erfolg bei eurer Präsentation. Gruß, Mister X"
+
+                Jan rennt so schnell er kann zum Computer und zieht das LAN-Kabel raus, was glücklicherweise den Vorgang beendet.
+                Den Großteil ihrer Daten konnten sie durch das Ziehen des Kabels retten, doch ein Teil wurde schon unwiderruflich 
+                gelöscht. Für einen Moment herrscht Stille. Was jetzt? Jan und Lisa starten die Computer neu, holen Stifte und Papier
+                und stellen ein Whiteboard auf, alles in der festen Überzeugung die verlorenen Daten wiederherzustellen um sich doch noch 
+                eine Möglichkeit auf den großen Mondbasis Vertrag zu sichern. Ganz leise hören sie die Uhr an der Wand ticken. Nur noch 
+                eine Stunde Zeit bis die Konferenz beginnt. Wenn sie es nicht schaffen, bleibt ihr Traum weiter nur ein Traum. 
+            </p>
+
+            <p>
+                Bei dem Datenverlust wurde aus dem Passwort Manager auch das Passwort für ihren E-Mail Account gelöscht. Falls sie es
+                schaffen, das Passwort zu finden, können sie eine E-Mail schreiben und somit die Konferenz um 10 Minuten verzögern.
+                Irgendwo in ihrem Forschungslabor muss das Passwort versteckt sein.
+            </p>
+
+            <p>
+                Hilf Jan und Lisa die verlorenen Daten wiederherzustellen und ihren Traum zu verwirklichen!
+            </p>
+        </div>
+
+        <!-- Main Container - Verschiedene Rooms -->
+        <div class="container text-center mt-5">
+            <div class="row justify-content-center row-cols-5">
+                <div class="col" onclick="location.href = './rooms/room-0.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="./images/retteleben.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Rette Leben!</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room0"></i>
+                            </div>
+                            <p>Raum 1</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" onclick="location.href = './rooms/room-1.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="./images/aktivierediesoftware.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Aktiviere die Software!</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room1"></i>
+                            </div>
+                            <p>Raum 2</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" onclick="location.href = './rooms/room-2.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="./images/keinstrommehr.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Kein Strom mehr!</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room2"></i>
+                            </div>
+                            <p>Raum 3</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" onclick="location.href = './rooms/room-3.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="./images/explosivertreibstoff.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Explosiver Treibstoff!</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room3"></i>
+                            </div>
+                            <p>Raum 4</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" onclick="location.href = './rooms/room-4.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="./images/timerlauft.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Timer läuft!</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room4"></i>
+                            </div>
+                            <p>Raum 5</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" onclick="location.href = './ende.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="./images/mondbasis.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Ende gut, alles gut?</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room8"></i>
+                            </div>
+                            <p>Ausgang</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

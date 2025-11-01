@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="bootstrap-5.2.3-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="bootstrap-5.2.3-dist/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="bootstrap-5.2.3-dist/css/bootstrap-utilities.min.css">
+    <link rel="stylesheet" href="bootstrap-5.2.3-dist/css/bootstrap-reboot.min.css">
+    <link rel="stylesheet" href="bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <script defer src="coin.js"></script>
+    <script defer src="countdown.js"></script>
+    <script defer src="rooms/roomstatus.js"></script>
+    <script defer src="home.js"></script>
+    <title>Escape Room</title>
+</head>
+
+<body>
+    <!-- Navbar mit Titel -->
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <h1>Escape Room</h1>
+
+            <div class="d-inline-flex flex-column">
+                <div class="d-inline-flex justify-content-end align-items-center">
+                    <i class="bi bi-stopwatch"></i>
+                    <a class="nav-link disabled mx-2" href="#" tabindex="-1" aria-disabled="true" id="countdown">--d --h
+                        --m
+                        --s</a>
+                </div>
+
+                <div class="d-inline-flex justify-content-end align-items-center">
+                    <i class="bi bi-coin"></i>
+                    <a class="nav-link disabled mx-2" href="#" tabindex="-1" aria-disabled="true" id="coins">--</a>
+                </div>
+            </div>
+
+        </div>
+    </nav>
+
+    <div class="m-3">
+        <!-- Flexbox Vertikal -->
+        <div class="d-flex flex-column m-5">
+
+            <h1>Story</h1>
+            <p>
+                Du wachst auf in einem düsteren Zimmer. Dein Kopf ist schwer, etwas muss wohl gefallen sein, entweder
+                dein Kopf auf den Boden oder etwas anderes auf deinen Kopf. Eine kleine Beule bildet sich bereits. Beim
+                Umsehen fällt dir die unglaubliche Unauffälligkeit der Kammer auf. Es ist in wirklich jeder Hinsicht
+                uninteressant. Das Mobiliar ist spartanisch gehalten, es gibt keine Fenster und nur eine einsame
+                Glühbirne an der Decke. Auffällig ist nur die ungewöhnlich hohe Anzahl an Türen, die aus dem Raum
+                hinausführen. Den Impuls, diesen Raum auf schnellstem Wege zu verlassen, kannst du gut verstehen. Neun
+                verschiedene Türen hierfür zur Verfügung zu stellen wirkt doch etwas übertrieben. Fragt sich nun wo die
+                Türen hinführen. Optisch unterscheiden sie sich nur durch kleine Symbole und Wörter, die darauf
+                angebracht sind. Eine Doppelhelix, einen Erlenmeyerkolben, ein Fragezeichen und mehrere weitere Symbole
+                kannst du ausmachen, mit denen du teils nichts anfangen kannst. Besonders interessiert dich die Tür mit
+                der Beschriftung „Freiheit“. Was hat dies alles zu bedeuten? Nach weiterem Umschauen findest du einen
+                Zettel. Drei in krakeliger Handschrift geschriebene Sätze kannst du entziffern "Mein Haus, meine Regeln.
+                Willst du entkommen, musst du dein Wissen unter Beweis stellen. Doch beeil dich, die Uhr tickt." Tick,
+                Tack, du blickst an die Wand von der das Geräusch kommt und siehst einen Countdown herunterzählen.
+                Vierzehn Minuten und Dreiunddreißig Sekunden. Schnell läufst du zur Tür und versuchst sie zu öffen, doch
+                du bist eingesperrt. Langsam dämmert es dir: Um zu entkommen musst du wohl vermutlich durch eine der
+                Türen gehen. Gerade als du schon in eine der Räume eintreten willst, entdeckst du neben der Tür zur
+                Freiheit noch ein kleines Display auf der ein Coin-Symbol erkennen ist. Eine große Null blickt dir
+                entgegen. Nach kurzem Überlegen fügen sich in deinem Kopf die Puzzlestücke. Das Coin-Display ist
+                vermutlich mit dem Schloss gekoppelt, welches sich daraus folgend öffnet, wenn ein bestimmter
+                Coin-Betrag erreicht wird. Außerdem ist dir klar, dass die Zeit rennt. Also machst du dich schnell auf
+                den Weg und betrittst einen der Räume.
+            </p>
+        </div>
+
+        <!-- Main Container - Verschiedene Rooms -->
+        <div class="container text-center mt-5">
+            <div class="row">
+                <div class="col" onclick="location.href = 'rooms/room-0.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="images/biologie.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Biologie</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room0"></i>
+                            </div>
+                            <p>Room 0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" onclick="location.href = 'rooms/room-1.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="images/informatik.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Informatik</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room1"></i>
+                            </div>
+                            <p>Room 1</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" onclick="location.href = './rooms/room-2.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="images/laptop.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Coding</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room2"></i>
+                            </div>
+                            <p>Room 2</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" onclick="location.href = 'rooms/room-3.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="images/periodensystem.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Chemie</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room3"></i>
+                            </div>
+                            <p>Room 3</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" onclick="location.href = 'rooms/room-4.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="images/physik.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Physik</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room4"></i>
+                            </div>
+                            <p>Room 4</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" onclick="location.href = 'rooms/room-5.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="images/matheeinfach.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Mathe Runen</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room5"></i>
+                            </div>
+                            <p>Room 5</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" onclick="location.href = 'rooms/room-6.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="images/sudoku.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Sudoku</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room6"></i>
+                            </div>
+                            <p>Room 6</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" onclick="location.href = 'rooms/room-7.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="images/box.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Die Kiste</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room7"></i>
+                            </div>
+                            <p>Room 7</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" onclick="location.href = 'rooms/room-8.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="images/gallerie.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Kunstausstellung</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room8"></i>
+                            </div>
+                            <p>Room 8</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col" onclick="location.href = 'ende.html';">
+                    <div class="card" style="width: 18rem;">
+                        <img src="images/coins.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="d-inline-flex">
+                                <h5 class="card-text">Tür zur Freiheit</h5>
+                                <i class="bi bi-check-circle-fill m-1" id="icon-room8"></i>
+                            </div>
+                            <p>Ausgang</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

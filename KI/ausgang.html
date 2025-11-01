@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Ausgang</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="ausgang">
+
+  <!-- Zurück-Link -->
+  <a href="index.html" class="back-link">← Zurück zur Übersicht</a>
+
+  <!-- Schlüsselanzeige oben rechts -->
+  <div class="keys-container">
+    <img src="img/key.png" class="key-img" id="key1">
+    <img src="img/key.png" class="key-img" id="key2">
+    <img src="img/key.png" class="key-img" id="key3">
+    <img src="img/key.png" class="key-img" id="key4">
+    <img src="img/key.png" class="key-img" id="key5">
+  </div>
+
+    <!-- Tür + Hinweis zentriert -->
+  <div class="exit-section">
+    <img src="img/door.png" class="exit-door" onclick="openDoor()">
+    <p id="door-hint" class="door-hint">Sammle alle 5 Schlüssel, um den Ausgang zu öffnen.</p>
+  </div>
+
+
+  <!-- Script für den Ausgang -->
+  <script src="addkey.js"></script>
+  <script src="ausgang.js"></script>
+</body>
+</html>

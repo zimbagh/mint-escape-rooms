@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap-utilities.min.css">
+  <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="../bootstrap-icons/bootstrap-icons.css">
+  <link rel="stylesheet" href="../rooms/templateroom.css">
+  <link rel="stylesheet" href="../rooms/room-2/note.css">
+  <link rel="stylesheet" href="../rooms/room-2/button.css">
+  <link rel="stylesheet" href="../rooms/room-2/room-2.css">
+
+  <script defer src="../coin.js"></script>
+  <script defer src="../countdown.js"></script>
+  <script defer src="../rooms/roomstatus.js"></script>
+  <script defer src="../rooms/room-2/validation.js"></script>
+
+  <title>Escape Room</title>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-light">
+    <div class="container-fluid">
+      <button type="button" class="btn btn-light" onclick="location.href = '../home.html';">Zurück</button>
+
+      <div class="d-inline-flex flex-column">
+        <div class="d-inline-flex justify-content-end align-items-center">
+          <i class="bi bi-stopwatch"></i>
+          <a class="nav-link disabled mx-2" href="#" tabindex="-1" aria-disabled="true" id="countdown">
+            --d --h --m --s
+          </a>
+        </div>
+        <div class="d-inline-flex justify-content-end align-items-center">
+          <i class="bi bi-coin"></i>
+          <a class="nav-link disabled mx-2" href="#" tabindex="-1" aria-disabled="true" id="coins">--</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="m-3">
+    <div class="d-flex flex-column m-5">
+
+      <h1>Kein Strom mehr!</h1>
+
+      <p>
+        Die rote Warnleuchte blinkt immer noch schnell, während Jan und Lisa versuchen die Daten wiederherzustellen.
+        Lisa tippt weiter auf der Tastatur herum, bis sie irgendwann von der blinkenden Leuchte zu genervt ist.
+        Sie versucht die Leuchte über die Konsole auszuschalten, doch stoppt aus Versehen den Stromgenerator.
+        Auf dem Bildschirm steht: <b>„Energieversorgung reaktivieren“</b>.
+      </p>
+
+      <div class="shadow p-3 mb-2 bg-body rounded">
+        Lisa: „Ich habe aus Versehen den Stromgenerator abgeschaltet und er lässt sich nicht mehr aktivieren!“
+      </div>
+
+      <div class="shadow p-3 mb-2 bg-body rounded">
+        Jan: „Wir müssen die gesamte Stromversorgung mit diesen Knöpfen reaktivieren.
+        Jeder Knopf steht für einen Teil des Generators. Wir haben uns doch am Anfang Hinweise aufgeschrieben.“
+      </div>
+
+      <div class="note-hints" role="note" aria-label="Hinweise Startsequenz">
+        <div class="note-pin" aria-hidden="true"></div>
+        <h3>Startsequenz</h3>
+        <ul>
+          <li>Jeder Knopf muss genau 2 mal gedrückt werden.</li>
+          <li>Als erstes muss immer die Kühlung gedrückt werden.</li>
+          <li>Ganz am Ende muss die Zündung gedrückt werden.</li>
+          <li>Kein Knopf darf 2 mal in Folge gedrückt werden.</li>
+          <li>Der Treibstoff darf niemals direkt nach dem Öl betätigt werden.</li>
+          <li>Vor der finalen Zündung gibt es eine Zwischenzündung, nach dieser muss die Luftzufuhr aktiviert werden.</li>
+          <li>Zwischen Zwischenzündung und finaler Zündung dürfen maximal 5 andere Knöpfe gedrückt werden.</li>
+          <li>Die Summe der Werte der Knöpfe an den ersten 5 Positionen beträgt 15.</li>
+          <li>Die Summe der Werte der Knöpfe an allen geraden Positionen beträgt 9.</li>
+        </ul>
+      </div>
+
+      <div class="container text-center mt-5">
+        <h2>Stromgenerator</h2>
+        <p>Drücke die Knöpfe in der richtigen Reihenfolge, um den Generator zu reaktivieren.</p>
+
+        <div class="button-panel">
+          <div>
+            <button class="control-btn btn-1" data-value="1">1</button>
+            <div class="btn-label">Luftzufuhr</div>
+          </div>
+          <div>
+            <button class="control-btn btn-2" data-value="2">2</button>
+            <div class="btn-label">Ölzufuhr</div>
+          </div>
+          <div>
+            <button class="control-btn btn-3" data-value="3">3</button>
+            <div class="btn-label">Zündung</div>
+          </div>
+          <div>
+            <button class="control-btn btn-4" data-value="4">4</button>
+            <div class="btn-label">Treibstoff</div>
+          </div>
+          <div>
+            <button class="control-btn btn-5" data-value="5">5</button>
+            <div class="btn-label">Kühlung</div>
+          </div>
+        </div>
+
+        <div id="sequence" class="mt-4">
+          <h5>Aktuelle Eingabe:</h5>
+          <div id="sequence-grid">
+            <div id="inputSeq" class="seq-row">
+              <span>–</span><span>–</span><span>–</span><span>–</span><span>–</span>
+              <span>–</span><span>–</span><span>–</span><span>–</span><span>–</span>
+            </div>
+            <div id="sequenceIndex" class="index-row">
+              <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+              <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="reset-btn" id="reset">Reset</button>
+
+        <div id="result" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="liveAlertPlaceholder" class="bottom_fixed"></div>
+
+  <script>
+    const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+    const alert = (message, type) => {
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = [
+        `<div id="alert" class="alert alert-${type} fadeout" role="alert">`,
+        `${message}`,
+        `</div>`
+      ].join('');
+      alertPlaceholder.append(wrapper);
+    };
+  </script>
+
+</body>
+</html>
+
+
+
+

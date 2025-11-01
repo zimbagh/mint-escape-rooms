@@ -1,0 +1,162 @@
+
+
+
+.rocket {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-20deg);
+  width: 60px;
+  height: 200px;
+  background: #f2f2f2;
+  border: 4px solid #333;
+  border-radius: 5px 5px 10px 10px;
+  z-index: 1;
+}
+
+
+.rocket::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 34px solid transparent;
+  border-right: 34px solid transparent;
+  border-bottom: 50px solid #d94d4d;
+}
+
+
+.rocket::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 20px;
+  background: #333;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+
+.fin-left,
+.fin-right {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+
+.fin-left {
+  left: -30px;
+  border-width: 0 0 80px 30px; 
+  border-color: transparent transparent #d94d4d transparent;
+  transform: none;
+}
+
+
+.fin-right {
+  right: -30px;
+  border-width: 80px 0 0 30px; 
+  border-color: #d94d4d transparent transparent transparent;
+  transform: rotate(180deg) ;
+}
+
+
+.window {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #5aa9e6;
+  border: 3px solid #333;
+}
+
+
+.flame {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 40px;
+  background: radial-gradient(circle at 50% 20%, #fff, #ffae00 30%, #ff6600 80%, #d94d4d 100%);
+  border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+  animation: flame-flicker 0.2s infinite alternate;
+  z-index: -3;
+}
+
+@keyframes flame-flicker {
+  from {
+    transform: translateX(-50%) scaleY(1);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-50%) scaleY(0.8);
+    opacity: 0.85;
+  }
+}
+
+
+.moon {
+  position: absolute;
+  top: 1px;
+  right: -200px;
+  width: 120px;
+  height: 120px;
+  background: #e5e5e5;
+  border-radius: 50%;
+  border: 4px solid #333;
+  box-shadow: inset -10px -10px 0 #ccc;
+}
+
+
+body {
+  background-color: black; 
+  overflow-x: hidden;
+}
+
+
+.rocket-wrapper {
+  background-color: black; 
+  position: relative;
+  width: 100%;
+  height: 600px; 
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+
+.rocket-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(circle 1px at 10% 20%, #ffeb3b 90%, transparent 100%),
+    radial-gradient(circle 1px at 25% 80%, #ffeb3b 90%, transparent 100%),
+    radial-gradient(circle 1px at 60% 50%, #ffeb3b 90%, transparent 100%),
+    radial-gradient(circle 1px at 80% 30%, #ffeb3b 90%, transparent 100%),
+    radial-gradient(circle 1px at 45% 15%, #ffeb3b 90%, transparent 100%),
+    radial-gradient(circle 1px at 75% 70%, #ffeb3b 90%, transparent 100%),
+    radial-gradient(circle 1px at 15% 60%, #ffeb3b 90%, transparent 100%);
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+.rocket, .moon {
+  position: relative;
+  z-index: 1;
+}
+

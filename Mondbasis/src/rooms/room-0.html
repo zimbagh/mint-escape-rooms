@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap-utilities.min.css">
+    <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap-reboot.min.css">
+    <link rel="stylesheet" href="../bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="../rooms/templateroom.css">
+    <link rel="stylesheet" href="../rooms/room-0/room-0.css">
+    <link rel="stylesheet" href="../rooms/room-2/note.css">
+    <script defer src="../coin.js"></script><!-- update coins-->
+    <script defer src="../countdown.js"></script><!-- update countdown -->
+    <script defer src="../rooms/roomstatus.js"></script><!-- call setRoomStatusDone() in login_validation.js -->
+    <script defer src="../rooms/room-0/validation.js"></script>
+    <title>Escape Room</title>
+</head>
+
+<body>
+    <!-- Navbar mit Zurueck Button -->
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <button type="button" class="btn btn-light" onclick="location.href = '../home.html';">
+                Zurück
+            </button>
+
+            <div class="d-inline-flex flex-column">
+                <div class="d-inline-flex justify-content-end align-items-center">
+                    <i class="bi bi-stopwatch"></i>
+                    <a class="nav-link disabled mx-2" href="#" tabindex="-1" aria-disabled="true" id="countdown">--d --h
+                        --m
+                        --s</a>
+                </div>
+
+                <div class="d-inline-flex justify-content-end align-items-center">
+
+                    <a class="nav-link disabled mx-2" href="#" tabindex="-1" aria-disabled="true" id="coins">--</a>
+                </div>
+            </div>
+
+        </div>
+    </nav>
+    <div class="mx-3">
+        <!-- Flexbox Vertikal -->
+        <div class="d-flex flex-column m-5">
+            <h1>Rette Leben!</h1>
+        <p>
+        Hektisch fangen Jan und Lisa an die verlorenen Daten wiederherzustellen. Während Jan noch die Sauerstoffberechnung überprüft,
+        durchsucht Lisa die Datenbank mit den medizinischen Daten. Ohne funktionierende medizinische Systeme würde keine Regierung ihnen
+        den Zuschlag für die Mondbasis geben. Dieses medizinische System ist es notwendig, damit im Notfall bei einer Blutspende
+        alle Informationen vorhanden sind.
+        </p>
+
+        <div class="shadow p-3 mb-2 bg-body rounded">
+        Lisa: "Oh nein! Der Hacker hat nicht nur die technischen Daten gelöscht, sondern auch alle medizinischen Daten. Wir müssen 
+        bei der Konferenz nachweisen können, dass wir wissen wie die Blutgruppen funktionieren.
+        </div>
+
+        <div class="shadow p-3 mb-2 bg-body rounded">
+        Jan: "Was genau fehlt denn?"
+        </div>
+
+        <div class="shadow p-3 mb-2 bg-body rounded">
+        Lisa: "Es fehlt ein Teil der Blutgruppendatenbank. Wenn wir nicht nachweisen können, dass unser 
+        Notfall-Blutspendersystem funktioniert, wird die Regierung denken, dass unser Projekt nicht sicher ist!"
+        </div>
+
+        <p>
+        Das Blutspendersystem war eine ihrer wichtigsten Ideen. 
+        Ein Algorithmus sollte in Notfällen sofort geeignete Blutspender auswählen, basierend auf genetischen und 
+        medizinischen Daten. Jedoch können ohne die Blutgruppen aller Familienmitglieder die Vererbungsalgorithmen nicht getestet werden.
+        </p>
+
+        <div class="shadow p-3 mb-2 bg-body rounded">
+        Jan: "Warte... ein Teil der Daten ist ja noch da! Wir haben die Blutgruppen von Mutter und Kindern, nur die des Vaters fehlt."
+        </div>
+
+        <div class="shadow p-3 mb-2 bg-body rounded">
+        Lisa: "Stimmt! Und wenn wir zeigen können, dass unser System die fehlende Blutgruppe berechnet, beweist das,
+        dass unser medizinischer Algorithmus funktioniert!"
+        </div>
+
+        <p>
+        Jan sucht schnell aus einem Ordner die Notitzen zur Vererbung von Blutgruppen heraus, die sie benutzt haben, um den Algorithmus 
+        zu programmieren.
+        Kannst du Jan und Lisa helfen, die fehlende Blutgruppe zu rekonstruieren? 
+        Die Daten des Familienbluttests liegen noch auf dem Server.  
+        Kannst du herausfinden, welche Blutgruppe der Vater haben muss?
+        </p>
+
+
+
+        <div class="note-hints" role="note" aria-label="Hinweise Startsequenz">
+        <div class="note-pin" aria-hidden="true"></div>
+        <h3>Vererbung</h3>
+        <ul>
+            <li>Jeder Mensch hat zwei Erbanlagen für die Blutgruppe. Eine vom Vater, eine von der Mutter.</li>
+            <li>Mögliche Erbanlagen: AA, A0, BB, B0, AB, 00.</li>
+            <li>Die Blutgruppe eines Menschen wird durch diese zwei Erbanlagen bestimmt.</li>
+            <li>Dabei sind A und B gleich dominant. Die Blutgruppe 0 tritt also nur auf, wenn Vater und Mutter eine 0 ihrer eigenen Erbanlage weitergeben.</li>
+            <li>Bsp: Erbanlagen des Kindes: A0. Dies führt zur Blutgruppe A des Kindes.</li>
+            <li>Mögliche Blutgruppen: A, B, AB, 0.</li>
+            <li>Der Rhesusfaktor (positiv oder neagativ) wird ähnnlich bestimmt. </li>
+            <li>Jeder Mensch hat zwei Erbanlagen für den Rhesusfaktor. Eine vom Vater, eine von der Mutter.</li>
+            <li>Mögliche Erbanlagen Rhesusfaktor: DD, Dd, dd.</li>
+            <li>Der Rhesusfaktor wird durch diese zwei Erbanlagen bestimmt.</li>
+            <li>Hierbei ist der positive Rhesusfaktor dominant. DD ist positiv. dd ist negativ. Dd ist positiv.</li> 
+            <li>Wenn ein Elternteil Dd als Rhesusfaktor hat, kann entweder D oder d weitergegeben werden.</li> 
+            <li>Achte auf den Rhesusfaktor!</li> 
+        </ul>
+        </div>
+
+        <div class="note-hints" role="note" aria-label="Hinweise Startsequenz">
+        <div class="note-pin" aria-hidden="true"></div>
+        <h3>Daten:</h3>
+        <ul>
+            <li>Mutter: Blutgruppe: A negativ</li>
+            <li>Kind 1: Blutgruppe AB negativ</li>
+            <li>Kind 2: Blutgruppe 0 negativ</li>
+            <li>Vater: ?</li>           
+        </ul>
+        </div>
+
+        <form id="biologieroom-form" class="mt-4">
+
+      <div class="row justify-content-center mb-3">
+        <div class="col-md-3">
+          <label for="gene" class="form-label">Erbanlagen des Vaters</label>
+          <select class="form-select text-center" id="gene">
+            <option value="">Bitte wählen</option>
+            <option>AA</option>
+            <option>A0</option>
+            <option>BB</option>
+            <option>B0</option>
+            <option>AB</option>
+            <option>00</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row justify-content-center mb-3">
+        <div class="col-md-3">
+          <label for="blood" class="form-label">Blutgruppe des Vaters</label>
+          <select class="form-select text-center" id="blood">
+            <option value="">Bitte wählen</option>
+            <option>A</option>
+            <option>B</option>
+            <option>AB</option>
+            <option>0</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row justify-content-center mb-3">
+        <div class="col-md-3">
+          <label for="rhesus" class="form-label">Rhesusfaktor des Vaters</label>
+          <select class="form-select text-center" id="rhesus">
+            <option value="">Bitte wählen</option>
+            <option>negativ</option>
+            <option>positiv</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row justify-content-center mb-4">
+        <div class="col-md-3">
+          <label for="solutions" class="form-label">Anzahl möglicher Lösungen</label>
+          <select class="form-select text-center" id="solutions">
+            <option value="">Bitte wählen</option>
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="submit" class="btn btn-primary px-5">Prüfen</button>
+    </form>
+
+            <!-- Alertbox -->
+            <div id="liveAlertPlaceholder" class="bottom_fixed"></div>
+
+        </div>
+
+        <script>
+            const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+            const alert = (message, type) => {
+                const wrapper = document.createElement('div')
+                wrapper.innerHTML = [
+                    `<div id="alert" class="alert alert-${type} fadeout" role="alert">`,
+                    `${message}`,
+                    `</div>`
+                ].join('')
+                alertPlaceholder.append(wrapper)
+            }
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap-grid.min.css">
+  <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap-utilities.min.css">
+  <link rel="stylesheet" href="../bootstrap-5.2.3-dist/css/bootstrap-reboot.min.css">
+  <link rel="stylesheet" href="../bootstrap-icons/bootstrap-icons.css">
+  <link rel="stylesheet" href="../rooms/templateroom.css">
+  <link rel="stylesheet" href="../rooms/room-3/room-3.css">
+
+  <script defer src="../coin.js"></script>
+  <script defer src="../countdown.js"></script>
+  <script defer src="../rooms/roomstatus.js"></script>
+  <script defer src="../rooms/room-3/validation.js"></script>
+
+  <title>Escape Room</title>
+
+  <style>
+    .toolbox {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .token {
+    background: white;
+    border: 2px solid #007bff;
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    font-size: 2rem;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.2s ease;
+    }
+
+    .token:active {
+    transform: scale(1.1);
+    }
+
+    .drop-zone {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .slot {
+    width: 100px;             
+    height: 100px;
+    background: #e9ecef;
+    border: 2px dashed #aaa;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    padding: 0;                
+    overflow: hidden;         
+    }
+
+    .slot.filled {
+    border-style: solid;
+    background: #d1e7dd;
+    border-color: #198754;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    button {
+      padding: 0.8rem 2rem;
+      background: #007bff;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    button.reset {
+      background: #6c757d;
+    }
+
+    button.reset:hover {
+      background: #5a6268;
+    }
+
+    .drop-zone {
+  align-items: center;
+  font-size: 2rem;
+  gap: 1rem;
+}
+
+    .trash-zone {
+  border: 2px dashed #dc3545;
+  background: #f8d7da;
+  color: #721c24;
+  text-align: center;
+  padding: 1rem;
+  width: 300px;
+  margin: 0 auto 2rem auto;
+  border-radius: 10px;
+  font-weight: bold;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.trash-zone.dragover {
+  background: #f5c6cb;
+  border-color: #c82333;
+}
+
+    #result {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar mit Zurück-Button -->
+  <nav class="navbar navbar-expand-lg bg-light">
+    <div class="container-fluid">
+      <button type="button" class="btn btn-light" onclick="location.href = '../home.html';">
+        Zurück
+      </button>
+
+      <div class="d-inline-flex flex-column">
+        <div class="d-inline-flex justify-content-end align-items-center">
+          <i class="bi bi-stopwatch"></i>
+          <a class="nav-link disabled mx-2" href="#" tabindex="-1" aria-disabled="true" id="countdown">
+            --d --h --m --s
+          </a>
+        </div>
+
+        <div class="d-inline-flex justify-content-end align-items-center">
+
+          <a class="nav-link disabled mx-2" href="#" tabindex="-1" aria-disabled="true" id="coins">
+            --
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Inhalt -->
+  <div class="mx-3">
+    <div class="d-flex flex-column m-5">
+      <h1>Explosiver Treibstoff!</h1>
+
+            <p>
+                Während Lisa noch weitere Befehle in den Computer eingibt, durchsucht Jan seine Notitzen. Das leise Rauschen der
+                Lüftungsanlage wird fast übertönt durch das bedrohliche Ticken der Uhr. Jan schaut angespannt hoch zur Uhr. Nur noch wenig Zeit bis die Konferenz beginnt. Er steht auf um sich kurz die Beine zu vertreten und bemerkt auf einmal die Notitzen
+                auf dem Whiteboard die halb verwischt sind. oben steht groß die Überschrift "Treibstoff".
+            </p>
+
+            <div class="shadow p-3 mb-2 bg-body rounded">
+                Jan: "Lisa?!? Haben wir noch unsere Daten für den Raketentreibstoff?"
+            </div>
+
+            <p>
+                Auf einmal hört man im Raum nur noch hektisches Tippen auf der Tastatur.
+            </p>
+
+            <div class="shadow p-3 mb-2 bg-body rounded">
+                Lisa: "Mist, hier fehlt etwas. Zu der einen Komponente haben wir gar keine Daten mehr. Schau her. Nur noch die
+                Informationen zum flüssigen Sauerstoff sind vorhanden. Ich weiß gar nicht mehr was die andere Komponente war und
+                wie sie hergestellt wird. "
+            </div>
+
+            <div class="shadow p-3 mb-2 bg-body rounded">
+                Jan: "Ich weiß noch mehr zum Glück. Wir wollten durch den Sabatierprozess Methan herstellen welches wir dann auf ca. -170°C 
+                abkühlen, damit es sich genau wie der Sauerstoff verflüssigt. Das ist notwendig, damit Sauerstoff und Methan
+                ein geringeres Volumen haben und wir somit mehr Treibstoff in der Rakete mitnehmen können. Das Methan ist dann
+                der eigentliche Treibstoff und der flüssige Sauerstoff liefert den eigentlichen Sauerstoff, den das Methan zum Verbrennen
+                braucht. Leider weiß ich auch nicht mehr wie die Reaktionsgleichung zur Herstellung von Methan aussieht. Hier auf
+                dem Whiteboard steht noch, dass man zur Herstellung Kohlenstoffdioxid und Wasserstoff braucht und  
+                außer Methan noch Wasser entsteht."
+            </div>
+            <p>
+                Kannst du Jan und Lisa helfen die Reaktionsgleichung zur Herstellung von Methan aufzustellen?
+            </p>      
+
+      <img src="../rooms/room-3/periodensystem.png" class="img-fluid" alt="periodensystem">
+
+      <!-- Drag and drop -->
+      <div class="toolbox">
+        <div class="token" draggable="true" data-symbol="C">C</div>
+        <div class="token" draggable="true" data-symbol="H">H</div>
+        <div class="token" draggable="true" data-symbol="O">O</div>
+        <div class="token" draggable="true" data-symbol="1">1</div>
+        <div class="token" draggable="true" data-symbol="2">2</div>
+        <div class="token" draggable="true" data-symbol="3">3</div>
+        <div class="token" draggable="true" data-symbol="4">4</div>
+        <div class="token" draggable="true" data-symbol="+">+</div>
+        <div class="token" draggable="true" data-symbol="→">→</div>
+
+      </div>
+
+        <div class="trash-zone" id="trash">
+        🗑️ Entfernen
+        </div>
+
+      <div class="drop-zone">
+        <div class="slot" data-correct="C"></div>
+        <div class="slot" data-correct="O"></div>
+        <div class="slot" data-correct="2"></div>
+        <div class="slot" data-correct="+"></div>
+        <div class="slot" data-correct="4"></div>
+        <div class="slot" data-correct="H"></div>
+        <div class="slot" data-correct="2"></div>
+        <div class="slot" data-correct="→"></div>
+        <div class="slot" data-correct="C"></div>
+        <div class="slot" data-correct="H"></div>
+        <div class="slot" data-correct="4"></div>
+        <div class="slot" data-correct="+"></div>
+        <div class="slot" data-correct="2"></div>
+        <div class="slot" data-correct="H"></div>
+        <div class="slot" data-correct="2"></div>
+        <div class="slot" data-correct="O"></div>
+      </div>
+
+      <div class="buttons">
+        <button id="check">Prüfen</button>
+        <button id="reset" class="reset">Reset</button>
+      </div>
+
+      <div id="result"></div>
+
+      <!-- Alertbox -->
+      <div id="liveAlertPlaceholder" class="bottom_fixed"></div>
+    </div>
+  </div>
+  <script>
+    const alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+    const alert = (message, type) => {
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = [
+        `<div id="alert" class="alert alert-${type} fadeout" role="alert">`,
+        `${message}`,
+        `</div>`
+      ].join('');
+      alertPlaceholder.append(wrapper);
+    };
+  </script>
+</body>
+
+</html>

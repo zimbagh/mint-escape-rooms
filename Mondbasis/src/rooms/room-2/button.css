@@ -1,0 +1,137 @@
+body {
+  background-color: #f8f9fa;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  margin-bottom: 2rem;
+}
+
+.button-panel {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+/* === Grunddesign aller Knöpfe === */
+.control-btn {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+/* === Klick-Animation === */
+.control-btn:active {
+  transform: scale(0.9);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* === Farbdefinitionen === */
+.btn-1 { background: #007bff; } /* Luftzufuhr */
+.btn-2 { background: #6c757d; } /* Öl */
+.btn-3 { background: #dc3545; } /* Zündung */
+.btn-4 { background: #198754; } /* Treibstoff */
+.btn-5 { background: #0dcaf0; } /* Kühlung */
+
+/* === Hover-Effekte === */
+.btn-1:hover { background: #0056b3; }
+.btn-2:hover { background: #5a6268; }
+.btn-3:hover { background: #bb2d3b; }
+.btn-4:hover { background: #157347; }
+.btn-5:hover { background: #0b9cc7; }
+
+.btn-label {
+  text-align: center;
+  margin-top: 0.5rem;
+  font-weight: 600;
+}
+
+#result {
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.reset-btn {
+  margin-top: 2rem;
+  padding: 0.6rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  border: none;
+  background: #6c757d;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.reset-btn:hover {
+  background: #5a6268;
+}
+
+/* === Alerts unten mittig === */
+#liveAlertPlaceholder {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 20px;
+  z-index: 1055;
+  width: auto;
+  pointer-events: none;
+}
+#liveAlertPlaceholder .alert {
+  pointer-events: auto;
+  margin: 0;
+  text-align: center;
+}
+
+/* === Anzeige der Eingabe über Zahlen 1–10 === */
+#sequence {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+}
+
+#sequence-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+
+.seq-row,
+.index-row {
+  display: grid;
+  grid-template-columns: repeat(10, 2.2rem); /* gleiche Spaltenbreite */
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.seq-row span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2.2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #212529;
+  border-bottom: 2px solid #aaa;
+  min-width: 2rem;
+}
+
+.index-row span {
+  font-size: 1rem;
+  color: #6c757d;
+  font-weight: 500;
+  min-width: 2rem;
+  text-align: center;
+}
