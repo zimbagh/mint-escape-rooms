@@ -1,7 +1,7 @@
 function check_cookies() {
-    if (location.pathname != "/Escaperoom_Game/game") {
+    if (location.pathname != "game") {
         if (document.cookie == "" || document.cookie.match(new RegExp('(^| )' + "end" + '=([^;]+)'))[2] == "true") {
-            location.href = "/Escaperoom_Game/";
+            location.href = "";
         }
         console.log(document.cookie.match(new RegExp('(^| )' + "end" + '=([^;]+)'))[2] == "true");
         set_timer();
@@ -20,7 +20,7 @@ function start() {
     document.cookie = "raetsel03=false; path=/";
     document.cookie = "end=false; path=/";
     document.cookie = `start=${new Date()}; path=`;
-    location.href = "/Escaperoom_Game/home";
+    location.href = "home.html";
 }
 function check() {
     document.cookie = "end=true; path=/";
@@ -29,10 +29,10 @@ function check() {
     right += document.cookie.match(new RegExp('(^| )' + "raetsel02" + '=([^;]+)'))[2] == "true" ? 1 : 0;
     right += document.cookie.match(new RegExp('(^| )' + "raetsel03" + '=([^;]+)'))[2] == "true" ? 1 : 0;
     if (right == 3){
-        location.href = "/Escaperoom_Game/win";
+        location.href = "win.html";
     }
     else {
-        location.href = "/Escaperoom_Game/lose";
+        location.href = "lose.html";
     }
 }
 function check_raetsel01() {
