@@ -1,7 +1,7 @@
 function check_cookies() {
-    if (location.pathname != "game") {
+    if (location.pathname.split("/").at(-1) != "game.html") {
         if (document.cookie == "" || document.cookie.match(new RegExp('(^| )' + "end" + '=([^;]+)'))[2] == "true") {
-            location.href = "";
+            location.href = "game.html";
         }
         console.log(document.cookie.match(new RegExp('(^| )' + "end" + '=([^;]+)'))[2] == "true");
         set_timer();
