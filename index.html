@@ -3,14 +3,34 @@
 <body>
 <h1> MINT Escape Rooms </h1>
 <p>
-<a href="/MINT"> MINT </a>
+<a href="./MINT"> MINT </a>
 <br>
-<a href="/Spaceship"> Spaceship </a>
+<a href="./Spaceship"> Spaceship </a>
 <br>
-<a href="/KI"> KI </a>
+<a href="./KI"> KI </a>
 <br>
-<a href="/Mondbasis"> Mondbasis </a>
+<a href="./Mondbasis"> Mondbasis </a>
 <br>
 </p>
+<script>
+	// Alle Cookies löschen
+
+	document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+	// localStorage löschen
+  	localStorage.clear();
+
+  	// sessionStorage löschen
+ 	sessionStorage.clear();
+
+  	// IndexedDB löschen
+  if (window.indexedDB) {
+    indexedDB.databases().then((dbs) => {
+      dbs.forEach((db) => {
+        indexedDB.deleteDatabase(db.name);
+      });
+    });
+  }
+
+</script>
 </body>
 </html>
