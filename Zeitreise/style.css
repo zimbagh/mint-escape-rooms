@@ -1,0 +1,102 @@
+:root{--bg:#0f1020;--fg:#f0f3ff;--muted:#aab;--card:#17182c;--border:#2a2c4a;--accent:#ffd166}
+*{box-sizing:border-box}
+html, body {
+  min-height: 100%;
+}
+body{
+  margin:0;
+  background:radial-gradient(120% 80% at 0% 0%,#1a1c3d 0%,#0f1020 70%);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  color:var(--fg);
+  font:16px/1.55 system-ui,Segoe UI,Roboto,Helvetica,Arial;
+}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;backdrop-filter:blur(4px);gap:12px}
+.topbar h1{margin:0;font-size:20px}
+.controls{display:flex;align-items:center;gap:10px}
+.status{opacity:.85}
+main{max-width:960px;margin:0 auto;padding:18px}
+.lead{color:var(--muted)}
+.bullets{margin:0 0 1rem 1.1rem}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.card h3{margin-top:0}
+.card .meta{color:var(--muted);font-size:14px;margin:.4rem 0 .6rem}
+.card .desc{color:var(--fg);font-size:14px;margin:.2rem 0 .6rem}
+.badge{display:inline-block;padding:2px 8px;border:1px solid var(--border);border-radius:999px;font-size:12px;color:var(--muted)}
+.locked{opacity:.65;filter:grayscale(25%)}
+.card .actions{margin-top:.8rem;display:flex;gap:8px;flex-wrap:wrap}
+button{background:#1e2040;border:1px solid var(--border);color:var(--fg);padding:.6rem .9rem;border-radius:10px;cursor:pointer}
+button.primary{background:linear-gradient(90deg,#ffd166,#fca311);border:none;color:#2b1900}
+button.link{background:transparent;border:none;color:#9cf;text-decoration:underline;padding:0;cursor:pointer}
+button.ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+button.danger{border-color:#ff6b6b;color:#ff8b8b}
+button:disabled{opacity:.5;cursor:not-allowed}
+input[type="number"],input[type="text"]{background:#10143a;border:1px solid var(--border);color:#fff;padding:.6rem;border-radius:8px;width:100%}
+label{display:block;margin:.3rem 0}
+.notice{margin-top:.8rem;min-height:1.2rem}
+.muted{color:var(--muted)}
+.view[hidden]{display:none}
+.btm{padding:20px;text-align:center;color:var(--muted);border-top:1px solid var(--border);margin-top:20px}
+.success{border-color:#2e8b57}
+.special{grid-column:1/-1;position:relative;background:linear-gradient(135deg,#0b122f,#141a4a);border:1px solid #5ad1ff;box-shadow:0 0 0 2px rgba(90,209,255,.2),0 12px 30px rgba(0,0,0,.45);overflow:hidden}
+.special::before{content:"";position:absolute;inset:-2px;background:conic-gradient(from 0deg,transparent,#5ad1ff,transparent 30%);filter:blur(12px);opacity:.5;z-index:0;animation:spin 6s linear infinite}
+.special .inner{position:relative;z-index:1;display:flex;flex-direction:column;gap:.4rem}
+.special h3{font-size:22px;margin:.2rem 0}
+.special .meta{opacity:.9}
+.special .actions{justify-content:flex-start}
+.special .actions .primary{background:linear-gradient(90deg,#5ad1ff,#77ffc4);color:#051321;border:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+body[data-era="antike"] {
+  --bg: #2b1f14;
+  --card: #3a2a1a;
+  --border: #6b4f2a;
+  --accent: #e6c07b;
+  background-image: 
+    url("./images/antike.jpg")
+}
+body[data-era="neuzeit"] {
+  --bg: #111827;
+  --card: #1f2937;
+  --border: #374151;
+  --accent: #93c5fd;
+  background-image: 
+    url("./images/neuzeit.jpg")
+
+}
+body[data-era="moderne"] {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --border: #334155;
+  --accent: #7dd3fc;
+  background-image: 
+    url("./images/moderne.jpg")
+}
+body[data-era="krieg"] {
+  --bg: #18181b;
+  --card: #27272a;
+  --border: #52525b;
+  --accent: #a3e635;
+  background-image: 
+    url("./images/krieg.jpg")
+}
+body[data-era="digital"] {
+  --bg: #020617;
+  --card: #020617;
+  --border: #38bdf8;
+  --accent: #22d3ee;
+  background-image: 
+    url("./images/digital.jpg")            
+}
+body[data-era="gegenwart"] {
+  --bg: #020617;
+  --card: #041025;
+  --border: #5ad1ff;
+  --accent: #77ffc4;
+  background: radial-gradient(
+    120% 80% at 50% 0%,
+    #0ea5e9 0%,
+    #020617 70%
+  );
+}
