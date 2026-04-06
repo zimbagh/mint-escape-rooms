@@ -161,11 +161,9 @@ function renderMenu() {
     const btn = document.createElement("button");
 
     if (e.playable) {
-      btn.textContent = e.special ? "Beenden" : (solved ? "Nochmal" : "Start");
+      btn.textContent = e.special ? "Finale starten" : (solved ? "Nochmal" : "Start");
       btn.className = e.special ? "primary" : "";
-      btn.addEventListener("click", () =>
-        e.special ? showView("finale") : startEra(e.id)
-      );
+      btn.addEventListener("click", () => startEra(e.id));
     } else {
       btn.textContent = "In Entwicklung";
       btn.disabled = true;
@@ -196,7 +194,13 @@ function startEra(id) {
 function onSolve() {
   const id = state.currentEra;
 
-  if (!state.solved.includes(id) && id !== "present") {
+  // Wenn Gegenwart abgeschlossen → direkt Finale
+  if (id === "present") {
+    showView("finale");
+    return;
+  }
+
+  if (!state.solved.includes(id)) {
     state.solved.push(id);
     localStorage.setItem("ts_solved", JSON.stringify(state.solved));
   }
@@ -742,4 +746,108 @@ function renderHopper(container, solved, fail) {
 }
 
 
-function renderPresent() {}
+function renderPresent(container, solved, fail) {
+  const tasks = [
+    {
+      text: `
+        <strong>Finale – Pythagoras:</strong><br><br>
+        Ein rechtwinkliges Dreieck hat die Katheten 8 und 15.<br><br>
+        <strong>Aufgabe:</strong><br>
+        Wie lang ist die Hypotenuse?
+      `,
+      result: 17
+    },
+    {
+      text: `
+        <strong>Finale – Newton:</strong><br><br>
+        Gegeben:<br>
+        m = 4 kg<br>
+        a = 3 m/s²<br><br>
+        <strong>Aufgabe:</strong><br>
+        Berechne die Kraft.
+      `,
+      result: 12
+    },
+    {
+      text: `
+        <strong>Finale – Curie:</strong><br><br>
+        Ein Stoff hat die Masse 10 kg und ein Volumen von 2 m³.<br><br>
+        <strong>Aufgabe:</strong><br>
+        Berechne die Dichte (ρ = m / V).
+      `,
+      result: 5
+    },
+    {
+      text: `
+        <strong>Finale – Turing:</strong><br><br>
+        Startwert = 3<br>
+        Wiederhole 3-mal:<br>
+        → Wert = Wert + 2<br><br>
+        <strong>Aufgabe:</strong><br>
+        Was ist der Endwert?
+      `,
+      result: 9
+    },
+    {
+      text: `
+        <strong>Finale – Hopper:</strong><br><br>
+        <strong>Pseudocode:</strong><br>
+        let x = 2;<br>
+        wiederhole 6-mal: x = x * 2;<br><br>
+        <strong>Aufgabe:</strong><br>
+        Endwert von x?
+      `,
+      result: 128
+    }
+  ];
+
+  let current = 0;
+  const box = document.createElement("div");
+  container.appendChild(box);
+
+  function renderTask() {
+    box.innerHTML = `
+      <strong>Gegenwart:</strong><br>
+      Die Zeitlinien stabilisieren sich – aber nur, wenn du dein gesamtes Wissen korrekt anwendest.<br>
+      Jede Epoche hinterlässt eine letzte Prüfung.<br><br>
+    `;
+
+    const t = tasks[current];
+
+    const p = document.createElement("p");
+    p.innerHTML = t.text;
+
+    const form = document.createElement("form");
+    const input = document.createElement("input");
+    input.type = "number";
+    input.required = true;
+
+    const btn = document.createElement("button");
+    btn.className = "primary";
+    btn.textContent = "Prüfen";
+
+    form.append(input, btn);
+    box.append(p, form);
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+
+      if (Number(input.value) === t.result) {
+        next();
+      } else {
+        fail("Falsch. Denk an die jeweilige Epoche.");
+      }
+    });
+  }
+
+  function next() {
+    current++;
+    if (current < tasks.length) {
+      renderTask();
+    } else {
+      solved();
+    }
+  }
+
+  renderTask();
+}
