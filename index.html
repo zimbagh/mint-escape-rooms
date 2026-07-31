@@ -38,6 +38,8 @@
     }
 
     .room-card {
+      display: flex;
+      flex-direction: column;
       background: white;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -45,6 +47,8 @@
       text-align: center;
       overflow: hidden;
       transition: transform 0.2s ease;
+      text-decoration: none;
+      color: #004080;
     }
 
     .room-card:hover {
@@ -57,13 +61,10 @@
       object-fit: cover;
     }
 
-    .room-card a {
-      display: block;
-      padding: 1rem;
-      text-decoration: none;
-      color: #004080;
+    .room-card span {
+      padding: 0.5rem;
       font-weight: bold;
-      border-top: 1px solid #eee;
+      font-size: 1.4rem;
     }
 
     .room-card a:hover {
@@ -103,26 +104,26 @@
   </header>
 
   <div class="container">
-    <div class="room-card">
+    <a href="./MINT" class="room-card">
       <img src="MINT/images/biologie.jpg" alt="MINT Raum" />
-      <a href="./MINT">MINT</a>
-    </div>
-    <div class="room-card">
+      <span>MINT</span>
+    </a>
+    <a href="./Spaceship" class="room-card">
       <img src="Spaceship/assets/images/bg01.jpg" alt="Spaceship Raum" />
-      <a href="./Spaceship">Spaceship</a>
-    </div>
-    <div class="room-card">
+      <span>Spaceship</span>
+    </a>
+    <a href="./KI" class="room-card">
       <img src="KI/img/indexraum.jpg" alt="KI Raum" />
-      <a href="./KI">KI</a>
-    </div>
-    <div class="room-card">
+      <span>KI</span>
+    </a>
+    <a href="./Mondbasis" class="room-card">
       <img src="Mondbasis/src/images/mondbasis.png" alt="Mondbasis Raum" />
-      <a href="./Mondbasis">Mondbasis</a>
-    </div>
-    <div class="room-card">
+      <span>Mondbasis</span>
+    </a>
+    <a href="./Zeitreise" class="room-card">
       <img src="Zeitreise/images/krieg.jpg" alt="Zeitreise Raum" />
-      <a href="./Zeitreise">Zeitreise</a>
-    </div>
+      <span>Zeitreise</span>
+    </a>
     
   </div>
   <div class="container"></div>
