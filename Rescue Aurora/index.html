@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rescue Aurora</title>
+<style>
+/* === LOCAL FONTS (no external dependency) === */
+@font-face{font-family:'Orbitron';src:url('assets/orbitron-400.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Orbitron';src:url('assets/orbitron-700.woff2') format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'Orbitron';src:url('assets/orbitron-900.woff2') format('woff2');font-weight:900;font-display:swap}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e14;--metal:#2a2d35;--metalL:#353840;--metalD:#1e2128;
+  --glass:rgba(8,14,24,.78);--glassBd:rgba(120,180,220,.12);
+  --tx:#c8d0dc;--dm:#5a6474;--br:#e8eef6;
+  --ac:#39ff8e;--cy:#22d3ee;--warn:#f59e0b;--danger:#ef4444;--ok:#10b981;
+  --font:'Orbitron','Courier New',monospace;--mo:'Courier New',monospace;--sa:'Segoe UI',sans-serif;
+  --ui:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',system-ui,sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--font);overflow:hidden;font-size:13px}
+body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.05) 2px,rgba(0,0,0,.05) 4px);mix-blend-mode:overlay}
+
+.scr{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;overflow:hidden}
+.scr.on{display:flex;animation:boot .6s ease}
+@keyframes boot{0%{opacity:0;filter:brightness(2.5)}40%{filter:brightness(1.2)}100%{filter:none}}
+canvas#spk{position:fixed;inset:0;z-index:9997;pointer-events:none}
+
+/* === BUTTONS === */
+.bt{padding:15px 30px;background:linear-gradient(180deg,#46ffa6,#2bd982);border:none;
+  color:#06231a;font-family:var(--ui);font-size:1rem;font-weight:600;cursor:pointer;letter-spacing:0;border-radius:14px;transition:all .2s;
+  box-shadow:0 4px 18px rgba(57,255,142,.28),inset 0 1px 0 rgba(255,255,255,.35);text-transform:none}
+.bt:hover{filter:brightness(1.06);box-shadow:0 6px 24px rgba(57,255,142,.36),inset 0 1px 0 rgba(255,255,255,.4);transform:translateY(-1px)}
+.bt:active{transform:scale(.97)}.bt.sm{padding:13px 26px;font-size:.92rem;border-radius:12px}.bt.rd{background:linear-gradient(180deg,#ff5b5b,#e23b3b);color:#fff;box-shadow:0 4px 18px rgba(239,68,68,.3),inset 0 1px 0 rgba(255,255,255,.25)}
+
+/* === MEDIA BACKGROUND LAYER (image or video) === */
+.bgwrap{position:absolute;inset:0;z-index:0;overflow:hidden;background:#05080e}
+.bgi,.bgv{position:absolute;inset:-2%;width:104%;height:104%;object-fit:cover;background-size:cover;background-position:center}
+.bgi.kb,.bgv.kb{animation:kb 28s ease-in-out infinite alternate}
+@keyframes kb{0%{transform:scale(1.04) translate(0,0)}100%{transform:scale(1.12) translate(-1.5%,1.5%)}}
+.bgwrap::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,transparent 30%,rgba(5,8,14,.5) 80%,rgba(5,8,14,.8) 100%)}
+.bgwrap.dim::before{content:'';position:absolute;inset:0;background:rgba(5,8,14,.45);z-index:1}
+
+/* Particle overlay */
+.parts{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.parts .p{position:absolute;border-radius:50%}
+.parts.snow .p{background:rgba(219,238,255,.5);animation:pfall linear infinite}
+.parts.embers .p{background:rgba(255,160,60,.6);box-shadow:0 0 4px rgba(255,140,40,.5);animation:prise linear infinite}
+.parts.steam .p{background:rgba(120,255,180,.18);filter:blur(2px);animation:prise linear infinite}
+@keyframes pfall{0%{transform:translateY(-20px) translateX(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(105vh) translateX(20px);opacity:0}}
+@keyframes prise{0%{transform:translateY(20px) scale(1);opacity:0}15%{opacity:1}85%{opacity:.6}100%{transform:translateY(-105vh) scale(.4);opacity:0}}
+
+/* === TOP BAR === */
+.tbar{display:flex;align-items:center;padding:0 22px;height:66px;flex-shrink:0;position:relative;z-index:20;
+  background:linear-gradient(180deg,var(--metalL),var(--metalD));border-bottom:1px solid rgba(255,255,255,.05);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 8px rgba(0,0,0,.4);gap:8px}
+.tbar .logo{font-size:.98rem;color:var(--ac);letter-spacing:.1em;font-weight:700;white-space:nowrap;text-shadow:0 0 8px rgba(57,255,142,.2)}
+.ebar{display:flex;gap:3px;flex:1;max-width:320px;margin:0 14px}
+.ebar .seg{height:30px;flex:1;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.04);border-radius:3px;position:relative;overflow:hidden;box-shadow:inset 0 2px 3px rgba(0,0,0,.3);transition:all .5s}
+.ebar .seg.lit::after{content:'';position:absolute;inset:1px;background:linear-gradient(180deg,rgba(57,255,142,.5),rgba(57,255,142,.18));border-radius:1px;animation:segF .4s ease;box-shadow:0 0 6px rgba(57,255,142,.12) inset}
+@keyframes segF{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1)}}
+.ebar .seg .si{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#8893a0;letter-spacing:.04em;font-weight:700;z-index:1}
+.ebar .seg.lit .si{color:var(--ac);text-shadow:0 0 3px rgba(57,255,142,.3)}
+.timer{font-size:1.7rem;font-weight:700;color:var(--ac);text-shadow:0 0 8px rgba(57,255,142,.15);white-space:nowrap}
+.timer.w{color:var(--warn)}.timer.c{color:var(--danger);animation:pu .7s infinite}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.2}}
+.terr{font-size:.95rem;color:#8893a0;white-space:nowrap;font-weight:500}.terr span{color:var(--danger);font-weight:700;font-size:1.15rem}
+.tbar .rst{background:rgba(255,255,255,.04);border:1px solid rgba(239,68,68,.5);color:var(--danger);font-family:var(--ui);font-weight:700;font-size:.86rem;padding:9px 18px;cursor:pointer;letter-spacing:.04em;border-radius:10px;transition:all .15s;white-space:nowrap}
+.tbar .rst:hover{background:rgba(255,255,255,.14);transform:translateY(-1px)}
+
+/* === INTRO CUTSCENE === */
+#intro{position:fixed;inset:0;z-index:40;overflow:hidden;background:#000;display:none}
+#intro.on{display:block}
+.cframe{position:absolute;inset:0;opacity:0;transition:opacity 2s ease}
+.cframe.show{opacity:1}
+.cframe .ci{position:absolute;inset:0;background-size:cover;background-position:center;transform-origin:center}
+.cframe.k1 .ci{animation:ck1 13s ease-out forwards}
+.cframe.k2 .ci{animation:ck2 13s ease-out forwards}
+.cframe.k3 .ci{animation:ck3 15s ease-out forwards}
+@keyframes ck1{0%{transform:scale(1.03)}100%{transform:scale(1.14) translate(-1.5%,1.5%)}}
+@keyframes ck2{0%{transform:scale(1.12) translate(2%,0)}100%{transform:scale(1.03)}}
+@keyframes ck3{0%{transform:scale(1.0)}100%{transform:scale(1.16) translate(0,-2%)}}
+.cframe::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 35%,rgba(0,8,16,.6) 100%)}
+#csnow{position:absolute;inset:0;z-index:5;pointer-events:none}
+#intro::after{content:'';position:absolute;inset:0;z-index:6;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 3px)}
+.cbar{position:absolute;left:0;right:0;height:8vh;background:#000;z-index:8;pointer-events:none}.cbar.t{top:0}.cbar.b{bottom:0}
+.ctitle{position:absolute;top:8%;left:50%;transform:translateX(-50%);text-align:center;z-index:10;opacity:0;transition:opacity 2s ease;padding:22px 44px;background:rgba(6,10,18,.6);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border:.5px solid rgba(255,255,255,.12);border-radius:22px;box-shadow:0 16px 50px rgba(0,0,0,.55)}
+.ctitle.show{opacity:1}
+.ctitle h1{font-size:clamp(1.8rem,5vw,3.2rem);font-weight:900;color:#fff;letter-spacing:.18em;text-shadow:0 0 30px rgba(57,255,142,.5),0 0 60px rgba(34,211,238,.3),0 4px 12px rgba(0,0,0,.9)}
+.ctitle .s{font-size:clamp(.8rem,1.6vw,1rem);letter-spacing:.4em;color:#7defc8;margin-top:12px;text-transform:uppercase;font-weight:600;text-shadow:0 2px 8px rgba(0,0,0,.8)}
+.ctxt{position:absolute;left:50%;transform:translateX(-50%);bottom:13%;text-align:center;z-index:10;padding:26px 44px;opacity:0;transition:opacity 1.2s ease;max-width:82%;background:rgba(6,10,18,.74);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);border:.5px solid rgba(255,255,255,.14);border-radius:22px;box-shadow:0 16px 50px rgba(0,0,0,.6)}
+.ctxt.show{opacity:1}
+.ctxt .yr{font-family:var(--mo);font-size:clamp(1.3rem,3vw,2rem);font-weight:700;color:var(--ac);letter-spacing:.2em;text-shadow:0 0 20px rgba(57,255,142,.5);margin-bottom:14px}
+.ctxt .l{font-size:clamp(1.15rem,2.7vw,1.6rem);line-height:1.6;max-width:700px;margin:0 auto;color:#f2f7fc;font-weight:400;font-family:var(--ui)}
+.ctxt .l em{color:var(--cy);font-style:normal;font-weight:600}.ctxt .l strong{color:var(--ac);font-weight:600}
+.cskip{position:absolute;top:22px;right:24px;z-index:20;background:rgba(10,14,22,.6);border:.5px solid rgba(255,255,255,.22);color:#fff;font-family:var(--ui);font-size:1rem;font-weight:600;padding:14px 28px;border-radius:14px;cursor:pointer;letter-spacing:.02em;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 6px 20px rgba(0,0,0,.4);transition:all .2s}
+.cskip:hover{border-color:var(--ac);color:var(--ac);transform:translateY(-1px)}
+#cfade{position:absolute;inset:0;background:#000;z-index:15;opacity:0;transition:opacity 1.5s ease;pointer-events:none}#cfade.show{opacity:1}
+
+/* === INTRO MENU (after cutscene) === */
+#menu{align-items:center;justify-content:center;padding:24px;text-align:center;overflow-y:auto}
+#menu .bgwrap{filter:brightness(.5)}
+#menu .bt{padding:19px 44px;font-size:1.2rem;border-radius:16px}
+#menu .mcontent>div:first-child{font-size:3.4rem !important}
+.mcontent{position:relative;z-index:5}
+.mtitle{font-size:clamp(2.4rem,6vw,3.8rem);font-weight:900;color:var(--ac);letter-spacing:.16em;text-shadow:0 0 30px rgba(57,255,142,.3),0 2px 10px rgba(0,0,0,.8);margin-bottom:6px}
+.msub{display:inline-block;font-size:.8rem;color:#7defc8;letter-spacing:.4em;margin-bottom:24px;text-shadow:0 2px 6px rgba(0,0,0,.9);font-weight:600;background:rgba(6,10,18,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:7px 18px;border-radius:20px;border:.5px solid rgba(255,255,255,.1)}
+.mbox{max-width:540px;padding:26px 30px;border-radius:20px;text-align:left;line-height:1.75;font-size:1rem;margin:0 auto 26px;font-family:var(--ui);background:rgba(22,26,34,.78);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);border:.5px solid rgba(255,255,255,.12);box-shadow:0 12px 36px rgba(0,0,0,.45)}
+.mbox p{margin-bottom:8px}.mbox p:last-child{margin-bottom:0}.mbox .yr{font-family:var(--mo);font-weight:700;color:var(--ac)}
+
+/* === HUB === */
+.hgrid{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:24px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-content:start;overflow-y:auto;position:relative;z-index:5}
+#hub .bgwrap{filter:brightness(.32) saturate(.8)}
+.cd{padding:0;cursor:pointer;transition:all .35s;border-radius:14px;position:relative;overflow:hidden;height:172px;display:flex;flex-direction:column;justify-content:flex-end;
+  border:1px solid var(--glassBd);box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.cd .cbg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .5s;filter:brightness(.5)}
+.cd:hover .cbg{transform:scale(1.08);filter:brightness(.7)}
+.cd .cinner{position:relative;z-index:2;padding:18px;background:linear-gradient(0deg,rgba(8,12,20,.92),rgba(8,12,20,.4) 70%,transparent)}
+.cd:hover{transform:translateY(-2px);border-color:rgba(57,255,142,.3);box-shadow:0 8px 24px rgba(0,0,0,.4),0 0 16px rgba(57,255,142,.05)}
+.cd.ok{border-color:rgba(16,185,129,.35)}.cd.ok .cbg{filter:brightness(.55) saturate(1.1)}
+.cd .badge{position:absolute;top:12px;right:12px;z-index:3;font-size:.55rem;font-weight:700;letter-spacing:.1em;color:var(--ok);border:.5px solid rgba(16,185,129,.4);padding:5px 10px;border-radius:8px;background:rgba(8,12,20,.7);backdrop-filter:blur(8px)}
+.cd .ci{font-size:1.5rem;margin-bottom:5px}.cd .cn{font-size:.5rem;color:var(--cy);letter-spacing:.2em;margin-bottom:2px}
+.cd .cm{font-size:1.1rem;color:var(--br);margin-bottom:4px;font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,.8);font-family:var(--ui)}.cd .cx{font-size:.82rem;color:#c8d0dc;line-height:1.35;font-family:var(--ui)}
+.cd .ct{display:inline-block;margin-top:7px;padding:3px 10px;font-size:.55rem;border:.5px solid rgba(57,255,142,.3);color:var(--ac);letter-spacing:.08em;border-radius:7px;background:rgba(8,12,20,.5)}
+
+/* === PUZZLE SCENE === */
+.scene{flex:1;position:relative;overflow:hidden}
+
+/* Story intro card (fades in on module enter) */
+.storycard{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:rgba(5,8,14,.4);backdrop-filter:blur(2px);opacity:1;transition:opacity .8s ease}
+.storycard.hide{opacity:0;pointer-events:none}
+.storycard .sc{max-width:520px;text-align:center;padding:36px 32px;background:rgba(22,26,34,.82);backdrop-filter:blur(30px) saturate(1.6);-webkit-backdrop-filter:blur(30px) saturate(1.6);border:.5px solid rgba(255,255,255,.14);border-radius:28px;box-shadow:0 20px 60px rgba(0,0,0,.55)}
+.storycard .sc .ic{font-size:2.6rem;margin-bottom:14px;filter:drop-shadow(0 0 12px rgba(57,255,142,.3))}
+.storycard .sc h2{font-size:1.4rem;font-weight:700;color:#fff;letter-spacing:0;margin-bottom:12px;font-family:var(--ui)}
+.storycard .sc p{font-size:1rem;line-height:1.65;color:#cfd8e3;font-family:var(--ui);margin-bottom:22px}
+
+/* CRT story monitor */
+.crt{position:absolute;border-radius:6px;overflow:hidden;padding:10px 14px;font-family:var(--mo);font-size:.66rem;line-height:1.6;z-index:15;
+  background:linear-gradient(180deg,rgba(0,18,10,.9),rgba(0,8,4,.94));border:2px solid rgba(57,255,142,.1);color:var(--ac);
+  box-shadow:inset 0 0 25px rgba(0,0,0,.5),0 4px 16px rgba(0,0,0,.4)}
+.crt::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 1px,rgba(0,0,0,.12) 1px,rgba(0,0,0,.12) 2px);pointer-events:none;opacity:.35}
+
+.scene .edu{position:absolute;padding:18px 22px;border-radius:20px;font-size:.95rem;line-height:1.5;font-family:var(--ui);z-index:15;
+  background:rgba(22,26,34,.74);backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);border:.5px solid rgba(255,255,255,.12);color:#dfe7f0;box-shadow:0 10px 32px rgba(0,0,0,.4)}
+.scene .edu h4{font-family:var(--ui);font-size:.72rem;font-weight:700;color:var(--cy);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase}
+.scene .edu .fm{display:inline-block;padding:8px 16px;background:rgba(0,0,0,.4);border:.5px solid rgba(57,255,142,.25);border-radius:10px;font-family:var(--mo);font-size:1.1rem;color:var(--ac);font-weight:700;text-shadow:0 0 6px rgba(57,255,142,.15);margin-top:4px}
+/* Collapsible method hint */
+.hintbox{position:absolute;top:62px;left:16px;z-index:16;max-width:min(93vw,360px)}
+.hintbtn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:30px;background:rgba(22,26,34,.78);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);border:.5px solid rgba(34,211,238,.3);color:var(--cy);font-family:var(--ui);font-size:.92rem;font-weight:600;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.35);transition:all .2s}
+.hintbtn:hover{border-color:var(--cy);transform:translateY(-1px)}
+.hintpanel{margin-top:10px;padding:18px 20px;border-radius:18px;background:rgba(20,24,32,.88);backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);border:.5px solid rgba(255,255,255,.12);box-shadow:0 12px 36px rgba(0,0,0,.45);max-height:calc(100vh - 96px);overflow-y:auto;overflow-x:hidden;display:none;animation:hintIn .22s ease}
+.hintpanel.open{display:block}
+@keyframes hintIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.hintpanel h4{font-family:var(--ui);font-size:.72rem;font-weight:700;color:var(--cy);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase}
+.hintpanel .fm{display:inline-block;padding:7px 14px;background:rgba(0,0,0,.4);border:.5px solid rgba(57,255,142,.25);border-radius:10px;font-family:var(--mo);font-size:1rem;color:var(--ac);font-weight:700;margin-bottom:8px}
+.hintpanel .hm{font-family:var(--ui);font-size:.9rem;line-height:1.55;color:#dfe7f0}
+
+.controls{position:relative;z-index:15;padding:18px 24px calc(18px + env(safe-area-inset-bottom));flex-shrink:0;
+  background:rgba(18,22,30,.82);backdrop-filter:blur(30px) saturate(1.7);-webkit-backdrop-filter:blur(30px) saturate(1.7);border-top:.5px solid rgba(255,255,255,.12);border-radius:26px 26px 0 0;box-shadow:0 -8px 32px rgba(0,0,0,.35);max-height:55%;overflow-y:auto}
+.pdots{display:flex;gap:6px;justify-content:center;margin-bottom:14px}
+.pdot{width:28px;height:5px;background:rgba(255,255,255,.14);border-radius:3px;transition:all .3s}
+.pdot.on{background:var(--ac);box-shadow:0 0 8px rgba(57,255,142,.4)}.pdot.dn{background:var(--ok)}
+
+.nx{display:inline-flex;align-items:center;justify-content:center;width:50px;height:56px;border-radius:12px;
+  background:linear-gradient(180deg,rgba(0,0,0,.5),rgba(0,0,0,.68));border:.5px solid rgba(57,255,142,.25);
+  font-family:var(--mo);font-size:1.65rem;font-weight:900;color:var(--ac);cursor:pointer;user-select:none;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.3);text-shadow:0 0 14px rgba(57,255,142,.45);transition:all .15s}
+.nx:hover{border-color:rgba(57,255,142,.5);transform:scale(1.04)}.nx:active{transform:scale(.96)}
+/* Chemistry coefficient stepper (iOS) */
+.cstep{display:inline-flex;flex-direction:column;align-items:center;gap:4px}
+.cstepb{width:50px;height:26px;border-radius:9px;background:rgba(255,255,255,.1);border:.5px solid rgba(255,255,255,.14);color:var(--ac);font-size:1.2rem;font-weight:400;cursor:pointer;line-height:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);transition:all .15s;display:flex;align-items:center;justify-content:center}
+.cstepb:hover{background:rgba(57,255,142,.16);border-color:rgba(57,255,142,.4)}.cstepb:active{transform:scale(.92)}
+.iip{padding:14px 16px;font-family:var(--mo);font-size:1.2rem;color:#fff;text-align:center;width:120px;border-radius:13px;
+  background:rgba(0,0,0,.38);border:.5px solid rgba(255,255,255,.16);box-shadow:inset 0 1px 3px rgba(0,0,0,.3);font-weight:700}
+.iip::placeholder{color:rgba(255,255,255,.25)}
+.iip:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 4px rgba(57,255,142,.18),inset 0 1px 3px rgba(0,0,0,.3)}
+.sdisp{font-family:var(--mo);font-size:.92rem;color:var(--dm);line-height:1.8}.sdisp .ok{color:var(--ok);font-weight:700}.sdisp .fl{color:var(--danger);font-weight:700}
+.eqr{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:.95rem;color:var(--br)}.eqr sub{font-size:.55em;color:var(--dm)}
+.toast{position:absolute;left:50%;transform:translateX(-50%);bottom:100px;padding:14px 24px;border-radius:16px;font-size:.95rem;font-weight:500;font-family:var(--ui);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;text-align:center;max-width:420px;z-index:18;box-shadow:0 10px 32px rgba(0,0,0,.45);backdrop-filter:blur(20px) saturate(1.6);-webkit-backdrop-filter:blur(20px) saturate(1.6)}
+.toast.ok{opacity:1;background:rgba(16,185,129,.85);border:.5px solid rgba(255,255,255,.2);color:#fff}
+.toast.er{opacity:1;background:rgba(239,68,68,.85);border:.5px solid rgba(255,255,255,.2);color:#fff}
+
+.mt{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:1px;max-width:380px}
+.mc{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.03);padding:1px;text-align:center;font-size:.48rem;color:var(--tx)}.mc b{color:var(--ac)}
+.lw{overflow-x:auto;border:1px solid rgba(255,255,255,.06);border-radius:4px;max-height:180px;background:rgba(5,8,14,.6)}
+.ltb{width:100%;border-collapse:collapse;font-size:.6rem;min-width:400px}
+.ltb th{text-align:left;padding:4px;background:rgba(0,0,0,.4);border-bottom:1px solid rgba(255,255,255,.04);font-size:.45rem;letter-spacing:.06em;color:var(--dm);font-weight:700}
+.ltb td{padding:3px 4px;border-bottom:1px solid rgba(255,255,255,.02)}.ltb tbody tr{cursor:pointer;transition:background .1s}
+.ltb tbody tr:hover td{background:rgba(57,255,142,.03)}.ltb tr.sl td{background:rgba(245,158,11,.1);color:var(--warn);font-weight:700}
+
+/* === INTERACTIVE APPARATUS === */
+#sceneUI{position:absolute;inset:0;display:flex;flex-direction:column;z-index:12}
+.appwrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:62px 14px 10px}
+.appsvg{width:100%;height:100%;max-width:760px;max-height:100%;filter:drop-shadow(0 8px 30px rgba(0,0,0,.5))}
+.app-hint{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:16;font-family:var(--ui);font-size:1rem;font-weight:500;color:#e8eef6;background:rgba(22,26,34,.72);backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);padding:13px 26px;border-radius:30px;border:.5px solid rgba(255,255,255,.14);letter-spacing:0;box-shadow:0 8px 28px rgba(0,0,0,.4);max-width:90%;text-align:center}
+/* Lever switch */
+.lever{cursor:pointer}
+/* Rotor controls */
+.rotbtn{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.1);border:.5px solid rgba(255,255,255,.16);color:var(--ac);font-size:1.6rem;font-weight:400;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 8px rgba(0,0,0,.3);user-select:none;transition:all .15s}
+.rotbtn:hover{background:rgba(57,255,142,.16);border-color:rgba(57,255,142,.4)}.rotbtn:active{transform:scale(.92)}
+.rotval{font-family:var(--mo);font-size:2.4rem;font-weight:900;color:var(--ac);min-width:72px;text-align:center;text-shadow:0 0 14px rgba(57,255,142,.4)}
+/* Bit switches (binary) */
+.bitsw{display:inline-flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;user-select:none}
+.bitsw .knob{width:44px;height:64px;border-radius:7px;background:linear-gradient(180deg,#1a1e26,#0e1116);border:1px solid rgba(255,255,255,.08);position:relative;box-shadow:inset 0 2px 6px rgba(0,0,0,.5);transition:all .2s}
+.bitsw .knob::after{content:'';position:absolute;left:5px;right:5px;height:26px;border-radius:5px;top:33px;background:linear-gradient(180deg,#33383f,#22262d);box-shadow:0 1px 2px rgba(0,0,0,.5);transition:all .25s}
+.bitsw.on .knob{border-color:rgba(57,255,142,.4);box-shadow:inset 0 2px 6px rgba(0,0,0,.5),0 0 12px rgba(57,255,142,.15)}
+.bitsw.on .knob::after{top:5px;background:linear-gradient(180deg,#39ff8e,#2bcc70);box-shadow:0 0 8px rgba(57,255,142,.5)}
+.bitsw .bl{font-family:var(--mo);font-size:.72rem;color:var(--dm)}.bitsw.on .bl{color:var(--ac)}
+.bitsw .bv{font-family:var(--mo);font-size:1.05rem;font-weight:700;color:var(--ac)}
+.readout{font-family:var(--mo);font-weight:900;font-size:1.4rem;color:var(--ac);text-shadow:0 0 12px rgba(57,255,142,.35);padding:6px 16px;background:rgba(0,0,0,.5);border:1px solid rgba(57,255,142,.15);border-radius:5px;box-shadow:inset 0 2px 6px rgba(0,0,0,.4)}
+.readout.bad{color:var(--warn);text-shadow:0 0 12px rgba(245,158,11,.35);border-color:rgba(245,158,11,.2)}
+/* Coordinate grid click */
+.gridclick{cursor:crosshair}
+
+.shk{animation:shk .35s ease}
+@keyframes shk{0%,100%{transform:translate(0)}15%,50%,85%{transform:translate(-5px,-1px)}30%,70%{transform:translate(5px,1px)}}
+
+/* === OVERLAYS === */
+.ov{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6)}
+.ov.on{display:flex}
+.ov .bgwrap{z-index:0}.ovb{position:relative;z-index:2;max-width:440px;padding:32px;text-align:center;border-radius:12px;background:var(--glass);backdrop-filter:blur(16px);border:1px solid var(--glassBd);box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.ovb h1{font-size:1rem;letter-spacing:.1em;margin-bottom:8px;text-shadow:0 0 14px currentColor}
+.ovb p{color:var(--tx);font-size:.8rem;line-height:1.65;margin-bottom:14px;font-family:var(--sa)}
+.ovs{display:flex;gap:10px;justify-content:center;margin-bottom:16px}
+.os{padding:9px 15px;text-align:center;border-radius:5px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.05)}
+.os .v{font-size:.95rem;font-weight:700;color:var(--ac)}.os .l{font-size:.35rem;color:var(--dm);letter-spacing:.06em;margin-top:1px}
+
+@media(max-width:700px){.hgrid{grid-template-columns:1fr}.crt,.scene .edu{font-size:.6rem;max-width:160px}}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(57,255,142,.1);border-radius:2px}
+</style>
+</head>
+<body>
+<canvas id="spk"></canvas>
+
+<!-- ============ INTRO CUTSCENE ============ -->
+<div id="intro">
+  <div class="cframe k1" id="cf0"><div class="ci" style="background-image:url('assets/intro.jpg')"></div></div>
+  <div class="cframe k2" id="cf1"><div class="ci" style="background-image:url('assets/halden.jpg')"></div></div>
+  <div class="cframe k3" id="cf2"><div class="ci" style="background-image:url('assets/crystal.jpg')"></div></div>
+  <canvas id="csnow"></canvas>
+  <div class="cbar t"></div><div class="cbar b"></div>
+  <div class="ctitle" id="ctitle"><h1>RESCUE AURORA</h1><div class="s">Antarktis · Station Aurora-9</div></div>
+  <div class="ctxt" id="ctxt"><div class="yr" id="cyr"></div><div class="l" id="cline"></div></div>
+  <div id="cfade"></div>
+  <button class="cskip" onclick="endCutscene()">SKIP ▸</button>
+</div>
+
+<!-- ============ MENU ============ -->
+<div id="menu" class="scr">
+  <div class="bgwrap"><div class="bgi kb" style="background-image:url('assets/intro.jpg')"></div></div>
+  <div class="parts snow" id="menuSnow"></div>
+  <div class="mcontent">
+    <div style="font-size:2.6rem;margin-bottom:4px;filter:drop-shadow(0 0 15px rgba(57,255,142,.2))">⛰</div>
+    <div class="mtitle">RESCUE AURORA</div>
+    <div class="msub">Antarktis · Station Aurora-9</div>
+    <div class="mbox"><p><span class="yr">Auftrag:</span> Sichert die Forschungsdaten aus sechs Stationsmodulen. Jedes erfordert eine wissenschaftliche Berechnung.</p><p>Notstrom: <strong style="color:var(--danger)">60 Minuten</strong> · <strong style="color:var(--warn)">Fehler = −30 Sek.</strong></p></div>
+    <div class="diffsel">
+      <div class="diffttl">Schwierigkeit wählen</div>
+      <div class="diffrow">
+        <button class="diffb on" data-d="leicht" onclick="setDiff('leicht')">LEICHT<span>5 Aufgaben / Modul</span></button>
+        <button class="diffb" data-d="mittel" onclick="setDiff('mittel')">MITTEL<span>6 Aufgaben / Modul</span></button>
+        <button class="diffb" data-d="schwer" onclick="setDiff('schwer')">SCHWER<span>7 Aufgaben / Modul</span></button>
+      </div>
+    </div>
+    <button class="bt" onclick="startHub()">▶ MISSION STARTEN</button>
+  </div>
+</div>
+<style>
+.diffsel{margin:2px 0 20px}
+.diffttl{font-family:var(--ui);font-size:.72rem;letter-spacing:3px;color:var(--dm);margin-bottom:10px;text-transform:uppercase}
+.diffrow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.diffb{display:flex;flex-direction:column;align-items:center;gap:3px;padding:11px 18px;border-radius:14px;background:rgba(8,18,24,.55);border:1px solid rgba(255,255,255,.12);color:var(--br);font-family:var(--ui);font-size:1.02rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s;backdrop-filter:blur(8px);min-width:128px}
+.diffb span{font-size:.62rem;font-weight:500;color:var(--dm);letter-spacing:.4px}
+.diffb:hover{border-color:rgba(57,255,142,.4);transform:translateY(-1px)}
+.diffb.on{background:rgba(57,255,142,.15);border-color:var(--ac);color:var(--ac);box-shadow:0 0 18px rgba(57,255,142,.22)}
+.diffb.on span{color:#8fe9c8}
+</style>
+
+<!-- ============ HUB ============ -->
+<div id="hub" class="scr">
+  <div class="tbar"><div class="logo">◆ AURORA-9</div><div class="ebar" id="eBar"></div><div class="timer" id="tD">60:00</div><div class="terr">Fehler:<span id="eC">0</span></div><button class="rst" onclick="rst()">↻ RESET</button></div>
+  <div class="bgwrap"><div class="bgi" style="background-image:url('assets/intro.jpg')"></div></div>
+  <div class="hgrid" id="mG"></div>
+</div>
+
+<!-- ============ PUZZLE ============ -->
+<div id="puz" class="scr">
+  <div class="tbar"><button class="rst" onclick="hub()" style="border-color:rgba(255,255,255,.45);color:var(--br);background:rgba(255,255,255,.08)">◂ ZURÜCK</button><button class="rst" onclick="showStory()" style="border-color:rgba(34,211,238,.45);color:var(--cy);background:rgba(34,211,238,.08)">📖 STORY</button><div class="logo" id="pT"></div><div class="ebar" id="eBar2"></div><div class="timer" id="pTi">60:00</div><div class="terr">Fehler:<span id="eD">0</span></div></div>
+  <div class="scene" id="SC"></div>
+</div>
+
+<!-- ============ OVERLAYS ============ -->
+<div class="ov" id="oW"><div class="bgwrap"><div class="bgi kb" style="background-image:url('assets/ending.jpg')"></div></div><div class="parts snow" id="winSnow"></div><div class="ovb"><h1 style="color:var(--ok)">MISSION ERFOLG</h1><p id="wM"></p><div class="ovs" id="wS"></div><button class="bt" onclick="rst()">↻ NEUE MISSION STARTEN</button></div></div>
+<div class="ov" id="oL"><div class="ovb"><h1 style="color:var(--danger)">SIGNAL VERLOREN</h1><p>Die Notstromreserven sind erschöpft. Das Signal verstummt im ewigen Eis.</p><div class="ovs" id="lS"></div><button class="bt rd" onclick="rst()">↻ ERNEUT VERSUCHEN</button></div></div>
+
+<script>
+/* ============================================================
+   ASSET CONFIG — VIDEO-SWAP READY
+   Um ein Standbild später durch eine Animation/Video zu ersetzen:
+   1. Video-Datei (z.B. assets/mod1.webm) in den assets-Ordner legen
+   2. Hier beim Modul "video:" den Pfad eintragen (statt null)
+   Das Spiel nutzt dann automatisch das Video statt des Bildes.
+   ============================================================ */
+const SCENE_MEDIA={
+  0:{img:'assets/mod1-strom.jpg',  video:null, parts:'embers'},
+  1:{img:'assets/mod2-krypto.jpg', video:null, parts:'snow'},
+  2:{img:'assets/mod3-reaktor.jpg',video:null, parts:'steam'},
+  3:{img:'assets/mod4-funk.jpg',   video:null, parts:'snow'},
+  4:{img:'assets/mod4-funk.jpg',   video:null, parts:'snow'},
+  5:{img:'assets/mod2-krypto.jpg', video:null, parts:'snow'}
+};
+function bgLayer(mod){const m=SCENE_MEDIA[mod];const inner=m.video?`<video class="bgv kb" autoplay muted loop playsinline><source src="${m.video}"></video>`:`<div class="bgi kb" style="background-image:url('${m.img}')"></div>`;return `<div class="bgwrap dim">${inner}</div><div class="parts ${m.parts}" id="scParts"></div>`}
+function fillParts(id,type,n){const c=document.getElementById(id);if(!c)return;let h='';for(let i=0;i<n;i++){const s=type==='steam'?6+Math.random()*10:1+Math.random()*3;const dur=type==='snow'?8+Math.random()*14:type==='embers'?4+Math.random()*6:6+Math.random()*8;h+=`<div class="p" style="left:${Math.random()*100}%;${type!=='snow'?'bottom:-20px;':'top:-20px;'}width:${s}px;height:${s}px;animation-duration:${dur}s;animation-delay:${Math.random()*dur}s;opacity:${.2+Math.random()*.5}"></div>`}c.innerHTML=h}
+
+// ===== SPARKS (errors) =====
+const sC=document.getElementById('spk'),sx=sC.getContext('2d');let sp=[];
+function rC(){sC.width=innerWidth;sC.height=innerHeight}rC();addEventListener('resize',rC);
+function emit(x,y,n){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=2+Math.random()*6;sp.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-3,l:1,d:.012+Math.random()*.02,s:1+Math.random()*2.5,h:20+Math.random()*30})}}
+function upSp(){sx.clearRect(0,0,sC.width,sC.height);sp=sp.filter(s=>{s.x+=s.vx;s.y+=s.vy;s.vy+=.1;s.l-=s.d;if(s.l<=0)return false;sx.globalAlpha=s.l;sx.fillStyle=`hsl(${s.h},100%,${50+s.l*30}%)`;sx.beginPath();sx.arc(s.x,s.y,s.s*.5,0,Math.PI*2);sx.fill();return true});if(sp.length>0)requestAnimationFrame(upSp)}
+
+// ===== CUTSCENE =====
+const csnow=document.getElementById('csnow'),csx=csnow.getContext('2d');
+function rcs(){csnow.width=innerWidth;csnow.height=innerHeight}rcs();addEventListener('resize',rcs);
+const cfl=[];for(let i=0;i<90;i++)cfl.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:.5+Math.random()*2.5,sp:.3+Math.random()*1.2,dr:Math.random()*.6-.3,o:.2+Math.random()*.5});
+let csOn=false;
+function dcs(){if(!csOn)return;csx.clearRect(0,0,csnow.width,csnow.height);for(const f of cfl){csx.globalAlpha=f.o;csx.fillStyle='#dbeeff';csx.beginPath();csx.arc(f.x,f.y,f.r,0,Math.PI*2);csx.fill();f.y+=f.sp;f.x+=f.dr;if(f.y>csnow.height){f.y=-5;f.x=Math.random()*csnow.width}if(f.x>csnow.width)f.x=0;if(f.x<0)f.x=csnow.width}requestAnimationFrame(dcs)}
+const cscript=[
+  {t:0,frame:0,title:1},
+  {t:1500,text:{yr:'1987',l:'Die Forschungsstation <em>Aurora-9</em> wird nach einem schweren Sturm evakuiert.'}},
+  {t:6000,text:{yr:'',l:'Dr. Martin Haldens bahnbrechende Forschung gilt seither als <strong>verloren</strong>.'},titleOff:1},
+  {t:11000,text:{yr:'2026',l:'Ein schwaches Signal erreicht die Hochschule Heilbronn — aus genau dieser Region.'},frameAt:1},
+  {t:16000,text:{yr:'',l:'Was hat Halden unter dem Eis <strong>entdeckt</strong>?'},frameAt:2},
+  {t:21000,text:{yr:'',l:'Die Station ist wieder online. Doch der Notstrom hält nur <strong>60 Minuten</strong>.'}},
+  {t:26000,end:1}
+];
+let ctimers=[];
+function cShowFrame(i){['cf0','cf1','cf2'].forEach((id,j)=>document.getElementById(id).classList.toggle('show',j===i))}
+function cShowText(o){const t=document.getElementById('ctxt');t.classList.remove('show');setTimeout(()=>{document.getElementById('cyr').innerHTML=o.yr||'';document.getElementById('cline').innerHTML=o.l;t.classList.add('show')},400)}
+function playCutscene(){document.getElementById('intro').classList.add('on');csOn=true;dcs();cShowFrame(0);
+  cscript.forEach(s=>ctimers.push(setTimeout(()=>{if(s.title)document.getElementById('ctitle').classList.add('show');if(s.titleOff)document.getElementById('ctitle').classList.remove('show');if(s.frameAt!==undefined)cShowFrame(s.frameAt);if(s.text)cShowText(s.text);if(s.end)endCutscene()},s.t)))}
+function endCutscene(){ctimers.forEach(clearTimeout);ctimers=[];document.getElementById('ctxt').classList.remove('show');document.getElementById('ctitle').classList.remove('show');document.getElementById('cfade').classList.add('show');
+  setTimeout(()=>{csOn=false;document.getElementById('intro').classList.remove('on');document.getElementById('cfade').classList.remove('show');ss('menu');fillParts('menuSnow','snow',40)},1600)}
+
+// ===== ENGINE =====
+const TT=3600;let G={tl:TT,sv:[0,0,0,0,0,0],mp:[0,0,0,0,0,0],st:null,iv:null,er:0,nT:5};
+let _diff='leicht';const DIFF={leicht:5,mittel:6,schwer:7};
+const MD=[{ic:'⚡',nm:'STROMNETZ',tg:'E-TECH',ds:'Generatorraum — Funken sprühen aus den Schaltschränken.'},{ic:'🔐',nm:'KRYPTANALYSE',tg:'INFOSEC',ds:'Computerraum — Haldens verschlüsseltes Logbuch.'},{ic:'⚗️',nm:'KÜHLREAKTOR',tg:'CHEM',ds:'Reaktorkern — das grüne Glühen wird stärker.'},{ic:'📍',nm:'PEILSENDER',tg:'MATH',ds:'Kommunikationszentrum — Standort lokalisieren.'},{ic:'📡',nm:'FUNKSTATION',tg:'SIGNAL',ds:'Funkraum — ein Signal aus dem Eis.'},{ic:'📊',nm:'SENSORIK',tg:'STAT',ds:'Datenarchiv — manipulierte Messwerte.'}];
+const STORY=[
+  {ic:'⚡',h:'GENERATORRAUM',p:'Die Notbeleuchtung pulsiert rot. Funken sprühen aus offenen Schaltschränken — drei Sektoren sind vom Netz. Ohne Strom erstickt die Station. Bring die Energieverteilung wieder zum Laufen.'},
+  {ic:'🔐',h:'COMPUTERRAUM',p:'Reihen alter Rechner summen in der Kälte. Auf einem Monitor: Dr. Haldens Logbuch — verschlüsselt. Was er hier festhielt, könnte alles erklären. Knacke den Code.'},
+  {ic:'⚗️',h:'REAKTORKAMMER',p:'Der Reaktorkern glüht giftig grün, Dampf zischt aus den Kupferrohren. Die Kühlung ist instabil. Balanciere die chemischen Reaktionen, bevor der Kern überhitzt.'},
+  {ic:'📍',h:'KOMMUNIKATIONSZENTRUM',p:'Vereiste Konsolen, ein gefrorenes Fenster zum Sendemast. Über die Peilsignale lässt sich der exakte Standort der Station berechnen — der Schlüssel zur Rettung.'},
+  {ic:'📡',h:'FUNKSTATION',p:'Aus dem Lautsprecher dringen rhythmische Impulse — ein Morsesignal aus dem Eis. Es könnte Haldens letzte Nachricht sein. Dekodiere es.'},
+  {ic:'📊',h:'DATENARCHIV',p:'Die Temperatursensoren zeichneten alles auf. Doch die Daten wurden manipuliert — jemand wollte etwas verbergen. Finde die Anomalien.'}
+];
+function _sv(){try{document.cookie='raF='+encodeURIComponent(JSON.stringify({tl:G.tl,sv:G.sv,mp:G.mp,st:G.st,er:G.er,nT:G.nT}))+';path=/;max-age=86400'}catch(e){}}
+function _ld(){try{const m=document.cookie.match(/raF=([^;]+)/);if(m){const d=JSON.parse(decodeURIComponent(m[1]));if(d&&d.st){G.tl=Math.max(0,TT-Math.floor((Date.now()-d.st)/1000));G.sv=d.sv||[0,0,0,0,0,0];G.mp=d.mp||[0,0,0,0,0,0];G.st=d.st;G.er=d.er||0;G.nT=d.nT||5;return true}}}catch(e){}return false}
+function _cl(){document.cookie='raF=;path=/;max-age=0'}
+function _tmr(){if(G.iv)clearInterval(G.iv);G.iv=setInterval(()=>{G.tl--;if(G.tl<=0){G.tl=0;clearInterval(G.iv);lose()}_ut();if(G.tl%15===0)_sv()},1000)}
+function _ut(){const m=Math.floor(G.tl/60),s=G.tl%60,str=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');['tD','pTi'].forEach(id=>{const e=document.getElementById(id);if(!e)return;e.textContent=str;if(id==='tD')e.className='timer'+(G.tl<300?' c':G.tl<600?' w':'')})}
+function rEB(){['eBar','eBar2'].forEach(eid=>{const eb=document.getElementById(eid);if(!eb)return;const labs=['E-TECH','INFOSEC','CHEM','MATH','SIGNAL','STAT'];eb.innerHTML=MD.map((m,i)=>`<div class="seg${G.sv[i]?' lit':''}"><div class="si">${labs[i]}</div></div>`).join('')})}
+function ss(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on')}
+window.setDiff=function(d){_diff=d;document.querySelectorAll('.diffb').forEach(b=>b.classList.toggle('on',b.dataset.d===d))};
+function boot(){const h=_ld();if(h&&G.tl>0&&G.sv.some(v=>v)){if(confirm('Laufende Mission fortsetzen?')){startHub();return}_cl()}playCutscene()}
+function startHub(){if(!G.st||!G.sv.some(v=>v)){G.st=Date.now();G.tl=TT;G.sv=[0,0,0,0,0,0];G.mp=[0,0,0,0,0,0];G.er=0;G.nT=DIFF[_diff]}rH();ss('hub');_tmr();_ut();_sv();rEB()}
+function hub(){stopModuleAnim();rH();ss('hub');rEB()}
+function rst(){if(!confirm('Mission zurücksetzen?'))return;_cl();if(G.iv)clearInterval(G.iv);G={tl:TT,sv:[0,0,0,0,0,0],mp:[0,0,0,0,0,0],st:null,iv:null,er:0,nT:DIFF[_diff]};document.querySelectorAll('.ov').forEach(o=>o.classList.remove('on'));ss('menu');fillParts('menuSnow','snow',40)}
+function aE(){G.er++;G.tl=Math.max(0,G.tl-30);document.getElementById('eD').textContent=G.er;document.getElementById('eC').textContent=G.er;const m=document.getElementById('SC');m.classList.add('shk');setTimeout(()=>m.classList.remove('shk'),350);emit(Math.random()*innerWidth,Math.random()*innerHeight*.3+50,22);requestAnimationFrame(upSp);_sv()}
+function sP(i){G.sv[i]=1;_sv();rEB();setTimeout(hub,1600)}
+function rH(){const g=document.getElementById('mG'),imgs=['mod1-strom','mod2-krypto','mod3-reaktor','mod4-funk','mod4-funk','mod2-krypto'];document.getElementById('eC').textContent=G.er;rEB();
+  g.innerHTML=MD.map((m,i)=>`<div class="cd${G.sv[i]?' ok':''}" onclick="${G.sv[i]?'':'oP('+i+')'}"><div class="cbg" style="background-image:url('assets/${imgs[i]}.jpg')"></div>${G.sv[i]?'<div class="badge">✓ GESICHERT</div>':(G.mp[i]>0?`<div class="badge" style="color:var(--cy);border-color:rgba(34,211,238,.45)">▸ ${G.mp[i]}/${G.nT} GELÖST</div>`:'')}<div class="cinner"><div class="ci">${m.ic}</div><div class="cm">${m.nm}</div><div class="cx">${m.ds}</div><div class="ct">${m.tg}</div></div></div>`).join('');
+  if(G.sv.filter(v=>v).length===6)setTimeout(win,400)}
+function oP(i){stopModuleAnim();document.getElementById('pT').textContent=MD[i].nm;document.getElementById('eD').textContent=G.er;rEB();ss('puz');_hintOpen=false;[P0,P1,P2,P3,P4,P5][i]()}
+// Collapsible method hint (explains HOW, never reveals the answer)
+let _hintOpen=false;
+let _stopAnim=null,_animTimer=null;
+function stopModuleAnim(){if(_stopAnim){_stopAnim();_stopAnim=null}if(_animTimer){clearTimeout(_animTimer);_animTimer=null}}
+function hintHTML(title,formula,method){return `<div class="hintbox"><button class="hintbtn" onclick="toggleHint()"><span>💡</span> Tipp ${_hintOpen?'▾':'▸'}</button><div class="hintpanel${_hintOpen?' open':''}" id="hintpanel"><h4>${title}</h4>${formula?`<div class="fm">${formula}</div><br>`:''}<div class="hm">${method}</div></div></div>`}
+window.toggleHint=function(){_hintOpen=!_hintOpen;const p=document.getElementById('hintpanel'),b=document.querySelector('.hintbtn');if(p)p.classList.toggle('open',_hintOpen);if(b)b.innerHTML='<span>💡</span> Tipp '+(_hintOpen?'▾':'▸')};
+window.showStory=function(){const c=document.getElementById('scard');if(c)c.classList.remove('hide')};
+function lose(){document.getElementById('lS').innerHTML=`<div class="os"><div class="v">${G.sv.filter(v=>v).length}/6</div><div class="l">MODULE</div></div>`;document.getElementById('oL').classList.add('on');_cl()}
+function win(){if(G.iv)clearInterval(G.iv);const el=TT-G.tl,m=Math.floor(el/60),s=el%60;
+  document.getElementById('wM').innerHTML='<em style="color:var(--cy)">"DATA ANALYSIS COMPLETE."</em><br>Alle sechs Module gesichert. Haldens Entdeckung ist dokumentiert: ein Kristall, der Energie hundertmal effizienter speichert als alles Bekannte. Er versiegelte die Station, um sie zu schützen.';
+  document.getElementById('wS').innerHTML=`<div class="os"><div class="v">6/6</div><div class="l">MODULE</div></div><div class="os"><div class="v">${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div><div class="l">ZEIT</div></div><div class="os"><div class="v">${G.er}</div><div class="l">FEHLER</div></div>`;document.getElementById('oW').classList.add('on');fillParts('winSnow','snow',40);_cl()}
+function toast(msg,ok){const t=document.getElementById('toast');if(!t)return;t.className='toast '+(ok?'ok':'er');t.innerHTML=msg;if(!ok)setTimeout(()=>t.className='toast',2600)}
+function toastOk(m){toast(m,true)}
+
+// Build a puzzle scene: bg image + story card + CRT + edu + controls
+function buildScene(mod,opts){const S=document.getElementById('SC');
+  S.innerHTML=bgLayer(mod)
+    +`<div class="storycard" id="scard"><div class="sc"><div class="ic">${STORY[mod].ic}</div><h2>${STORY[mod].h}</h2><p>${STORY[mod].p}</p><button class="bt" onclick="document.getElementById('scard').classList.add('hide')">▸ WEITER</button></div></div>`
+    +`<div id="sceneUI"></div>`;
+  fillParts('scParts',SCENE_MEDIA[mod].parts,SCENE_MEDIA[mod].parts==='steam'?14:SCENE_MEDIA[mod].parts==='embers'?20:35);
+}
+
+// ===== P0: STROMNETZ — live needle gauge + current flow =====
+function P0(){buildScene(0);const UI=document.getElementById('sceneUI');
+  const POOL=[{lbl:'SEKTOR A · O₂-PUMPEN',q:'U=120V | R=240Ω',ask:'I',ans:.5,tol:.01,u:'A',max:1,h:'I=U/R=120/240=0,5 A'},
+    {lbl:'SEKTOR B · HEIZUNG',q:'U=230V | I=2,5A',ask:'R',ans:92,tol:1,u:'Ω',max:200,h:'R=U/I=230/2,5=92 Ω'},
+    {lbl:'SEKTOR C · ANTRIEB',q:'R=80Ω | I=1,5A',ask:'U',ans:120,tol:1,u:'V',max:250,h:'U=R·I=80·1,5=120 V'},
+    {lbl:'SEKTOR D · LABOR (Reihe)',q:'R₁=100Ω + R₂=150Ω in Reihe | U=50V',ask:'I',ans:.2,tol:.005,u:'A',max:.5,h:'Reihe: R=250Ω → I=50/250=0,2 A'},
+    {lbl:'SEKTOR E · SENSORIK (Reihe)',q:'R₁=150Ω + R₂=350Ω in Reihe | U=110V',ask:'I',ans:.22,tol:.005,u:'A',max:.5,h:'Reihe: R=500Ω → I=110/500=0,22 A'},
+    {lbl:'SEKTOR F · KÜHLUNG (Parallel)',q:'R₁=200Ω ∥ R₂=200Ω | U=15V',ask:'I',ans:.15,tol:.005,u:'A',max:.5,h:'Parallel: R=100Ω → I=15/100=0,15 A'},
+    {lbl:'SEKTOR G · HAUPTNETZ (Parallel)',q:'R₁=300Ω ∥ R₂=600Ω | U=48V',ask:'I',ans:.24,tol:.005,u:'A',max:.5,h:'Parallel: R=200Ω → I=48/200=0,24 A'}];
+  const T=POOL.slice(0,G.nT);
+  let ph=G.mp[0]||0,cur=0,solved=false;
+  function app(){const t=T[ph];const cx=210,cy=235,r=150;
+    const f=Math.max(0,Math.min(1,(cur||0)/t.max)),ang=Math.PI*(1-f),nx=cx+r*Math.cos(ang),ny=cy-r*Math.sin(ang);
+    const tf=t.ans/t.max,ta0=Math.PI*(1-Math.max(0,tf-0.04)),ta1=Math.PI*(1-Math.min(1,tf+0.04));
+    const near=Math.abs((cur||0)-t.ans)<=t.tol;const gc=solved?'#10b981':near?'#39ff8e':'#22d3ee';
+    const tz0x=cx+r*Math.cos(ta0),tz0y=cy-r*Math.sin(ta0),tz1x=cx+r*Math.cos(ta1),tz1y=cy-r*Math.sin(ta1);
+    document.getElementById('appBox').innerHTML=`<svg class="appsvg" viewBox="0 0 420 470" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="gl"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e323b"/><stop offset="1" stop-color="#171a20"/></linearGradient></defs>
+      <rect x="20" y="20" width="380" height="300" rx="16" fill="url(#mg)" stroke="rgba(255,255,255,.08)" stroke-width="2"/>
+      <text x="210" y="48" text-anchor="middle" fill="${gc}" font-size="13" font-family="Orbitron,sans-serif" font-weight="700" letter-spacing="2">${t.lbl}</text>
+      <!-- gauge arc -->
+      <path d="M ${cx-r} ${cy} A ${r} ${r} 0 0 1 ${cx+r} ${cy}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="10"/>
+      <!-- target zone -->
+      <path d="M ${tz0x} ${tz0y} A ${r} ${r} 0 0 1 ${tz1x} ${tz1y}" fill="none" stroke="#39ff8e" stroke-width="10" opacity=".5"/>
+      <!-- ticks -->
+      ${Array.from({length:11},(_,i)=>{const a=Math.PI*(1-i/10);return `<line x1="${cx+(r-8)*Math.cos(a)}" y1="${cy-(r-8)*Math.sin(a)}" x2="${cx+(r+4)*Math.cos(a)}" y2="${cy-(r+4)*Math.sin(a)}" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/>`}).join('')}
+      <!-- needle -->
+      <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="${gc}" stroke-width="3.5" stroke-linecap="round" filter="url(#gl)"/>
+      <circle cx="${cx}" cy="${cy}" r="9" fill="${gc}" filter="url(#gl)"/>
+      <!-- digital readout -->
+      <rect x="150" y="250" width="120" height="40" rx="5" fill="rgba(0,0,0,.5)" stroke="rgba(57,255,142,.2)"/>
+      <text x="210" y="277" text-anchor="middle" fill="${gc}" font-size="20" font-family="Courier New" font-weight="700">${(cur||0).toFixed(t.u==='Ω'?0:2)} ${t.u}</text>
+      <!-- circuit + bulb -->
+      <line x1="60" y1="360" x2="160" y2="360" stroke="${solved?gc:'#5a6474'}" stroke-width="3" ${solved?'stroke-dasharray="8,4"':''}>${solved?'<animate attributeName="stroke-dashoffset" values="12;0" dur=".5s" repeatCount="indefinite"/>':''}</line>
+      <circle cx="210" cy="360" r="34" fill="${solved?'rgba(57,255,142,.25)':'rgba(255,255,255,.02)'}" stroke="${solved?gc:'#5a6474'}" stroke-width="2.5" filter="${solved?'url(#gl)':''}"/>
+      <text x="210" y="370" text-anchor="middle" font-size="30">${solved?'💡':'⚫'}</text>
+      <line x1="260" y1="360" x2="360" y2="360" stroke="${solved?gc:'#5a6474'}" stroke-width="3" ${solved?'stroke-dasharray="8,4"':''}>${solved?'<animate attributeName="stroke-dashoffset" values="12;0" dur=".5s" repeatCount="indefinite"/>':''}</line>
+      <text x="210" y="430" text-anchor="middle" fill="${solved?gc:'#5a6474'}" font-size="11" font-family="Courier New" letter-spacing="2">${solved?'● STROMKREIS GESCHLOSSEN':'○ KEIN STROMFLUSS'}</text>
+    </svg>`}
+  function render(){const t=T[ph];
+    UI.innerHTML=`<div class="app-hint">Sektor ${ph+1}/${T.length} | ${t.q} → ${t.ask} = ?</div>
+      <div class="appwrap"><div id="appBox" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center"></div></div>
+      ${hintHTML('Ohmsches Gesetz','U = R × I','Stelle das Ohmsche Gesetz nach der gesuchten Größe um: <b>I = U/R</b>, <b>R = U/I</b> oder <b>U = R·I</b>.<br><br><b>Reihenschaltung:</b> Widerstände addieren → R = R₁ + R₂.<br><b>Parallelschaltung (∥):</b> 1/R = 1/R₁ + 1/R₂ — bei zwei gleichen Widerständen also R = R₁/2, sonst R = (R₁·R₂)/(R₁+R₂). Erst den Gesamtwiderstand bilden, dann das Ohmsche Gesetz anwenden. Der Zeiger zeigt live deinen eingegebenen Wert.')}
+      <div class="controls"><div class="pdots">${T.map((_,i)=>`<div class="pdot${i<ph?' dn':i===ph?' on':''}"></div>`).join('')}</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">
+        <span style="color:#aeb8c4;font-size:1.05rem;font-family:var(--ui);font-weight:500">${t.ask} =</span><input class="iip" id="i0" autocomplete="off" placeholder="0" inputmode="decimal"><span style="color:#aeb8c4;font-size:1.05rem;font-family:var(--ui);font-weight:500">${t.u}</span>
+        <button class="bt sm" onclick="c0()">EINSPEISEN</button></div></div><div class="toast" id="toast"></div>`;
+    app();const inp=document.getElementById('i0');
+    inp.addEventListener('input',()=>{cur=parseFloat(inp.value.replace(',','.'))||0;app()});
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')c0()});setTimeout(()=>inp.focus(),100)}
+  window.c0=function(){const t=T[ph];if(isNaN(cur)||cur===0){toast('Stelle zuerst einen Wert ein.',false);return}
+    if(Math.abs(cur-t.ans)<=t.tol){solved=true;app();toastOk('✔ '+t.h);setTimeout(()=>{if(ph<T.length-1){ph++;G.mp[0]=ph;_sv();cur=0;solved=false;render()}else{sP(0)}},1200)}
+    else{toast('✗ Nicht korrekt · −30s · öffne den 💡 Tipp',false);aE()}};render()}
+
+// ===== P1: KRYPTANALYSE — live Caesar rotor =====
+function P1(){buildScene(1);const UI=document.getElementById('sceneUI');
+  const POOL=[{pl:'EIS',sh:4},{pl:'HALDEN',sh:7},{pl:'KRISTALL',sh:11},{pl:'ANTARKTIS',sh:14},{pl:'FORSCHUNG',sh:19},{pl:'GENERATOR',sh:21},{pl:'EVAKUIERUNG',sh:23}];
+  const T=POOL.slice(0,G.nT);let ph=G.mp[1]||0,shift=0;
+  function enc(pl,s){return pl.split('').map(c=>c>='A'&&c<='Z'?String.fromCharCode(((c.charCodeAt(0)-65+s)%26)+65):c).join('')}
+  function cipher(){return enc(T[ph].pl,T[ph].sh)}
+  function dec(s){return cipher().split('').map(c=>c>='A'&&c<='Z'?String.fromCharCode(((c.charCodeAt(0)-65-s+26)%26)+65):c).join('')}
+  function app(){const raw=cipher(),cur=dec(shift),ok=shift===T[ph].sh;const col=ok?'#10b981':'#22d3ee';
+    document.getElementById('appBox').innerHTML=`<svg class="appsvg" viewBox="0 0 540 330" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="gl"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <rect x="15" y="15" width="510" height="170" rx="10" fill="#040810" stroke="${col}" stroke-width="1.5" filter="url(#gl)"/>
+      <text x="32" y="44" fill="var(--dm)" font-size="10" font-family="Courier New" letter-spacing="2">GEHEIMTEXT</text>
+      <text x="32" y="74" fill="#f59e0b" font-size="20" font-family="Courier New" letter-spacing="4" font-weight="700">${raw}</text>
+      <line x1="32" y1="92" x2="508" y2="92" stroke="rgba(255,255,255,.08)"/>
+      <text x="32" y="118" fill="var(--dm)" font-size="10" font-family="Courier New" letter-spacing="2">KLARTEXT · ROTOR = ${shift}</text>
+      <text x="32" y="156" fill="${ok?'#10b981':'#22d3ee'}" font-size="22" font-family="Courier New" letter-spacing="4" font-weight="700">${cur}</text>
+      <text x="498" y="44" font-size="20">${ok?'🔓':'🔒'}</text>
+      <circle cx="270" cy="258" r="46" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="8"/>
+      <circle cx="270" cy="258" r="46" fill="none" stroke="${col}" stroke-width="8" stroke-dasharray="${2*Math.PI*46*shift/26} ${2*Math.PI*46}" transform="rotate(-90 270 258)" filter="url(#gl)"/>
+      <text x="270" y="254" text-anchor="middle" fill="${col}" font-size="24" font-family="Courier New" font-weight="900">${shift}</text>
+      <text x="270" y="274" text-anchor="middle" fill="var(--dm)" font-size="8" font-family="Courier New">VERSCHIEBUNG</text>
+    </svg>`}
+  function render(){UI.innerHTML=`<div class="app-hint">Funkspruch ${ph+1}/${T.length} | drehe den Rotor, bis lesbarer Text erscheint, und tippe ihn ein</div>
+      <div class="appwrap"><div id="appBox" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center"></div></div>
+      ${hintHTML('Cäsar-Chiffre · so knackst du den Code','','Im Funkspruch steckt ein deutsches Wort, das mit einer Cäsar-Chiffre verschlüsselt wurde. Deine Aufgabe: die Verschiebung finden und das Wort lesbar machen.<br><br><b style="color:var(--cy);font-size:.95rem">1 · Wie funktioniert die Chiffre?</b><br>Beim Verschlüsseln rückt jeder Buchstabe um eine feste Zahl im Alphabet nach hinten. Bei Verschiebung 3 wird A→D, B→E, C→F … Hinter Z geht es wieder bei A weiter (sogenannter Wrap-around). Diese eine Zahl ist der <b>Schlüssel</b> und gilt für die ganze Nachricht. Zum <b>Entschlüsseln</b> schiebst du jeden Buchstaben um genau dieselbe Zahl wieder nach vorne (D→A …). Hast du den Schlüssel einmal gefunden, wird der komplette Text lesbar.<br><br><b style="color:var(--cy);font-size:.95rem">2 · Alphabet mit Positionsnummern</b><br>Nummeriere die Buchstaben ab 0 – damit lässt sich jede Verschiebung ausrechnen:<div style="margin:8px 0;padding:9px 11px;background:rgba(0,0,0,.35);border:.5px solid rgba(34,211,238,.25);border-radius:10px;font-family:var(--mo);font-size:.76rem;line-height:1.65;color:var(--cy)"><span style="display:inline-block;margin:0 11px 2px 0">A=0</span><span style="display:inline-block;margin:0 11px 2px 0">B=1</span><span style="display:inline-block;margin:0 11px 2px 0">C=2</span><span style="display:inline-block;margin:0 11px 2px 0">D=3</span><span style="display:inline-block;margin:0 11px 2px 0">E=4</span><span style="display:inline-block;margin:0 11px 2px 0">F=5</span><span style="display:inline-block;margin:0 11px 2px 0">G=6</span><span style="display:inline-block;margin:0 11px 2px 0">H=7</span><span style="display:inline-block;margin:0 11px 2px 0">I=8</span><span style="display:inline-block;margin:0 11px 2px 0">J=9</span><span style="display:inline-block;margin:0 11px 2px 0">K=10</span><span style="display:inline-block;margin:0 11px 2px 0">L=11</span><span style="display:inline-block;margin:0 11px 2px 0">M=12</span><span style="display:inline-block;margin:0 11px 2px 0">N=13</span><span style="display:inline-block;margin:0 11px 2px 0">O=14</span><span style="display:inline-block;margin:0 11px 2px 0">P=15</span><span style="display:inline-block;margin:0 11px 2px 0">Q=16</span><span style="display:inline-block;margin:0 11px 2px 0">R=17</span><span style="display:inline-block;margin:0 11px 2px 0">S=18</span><span style="display:inline-block;margin:0 11px 2px 0">T=19</span><span style="display:inline-block;margin:0 11px 2px 0">U=20</span><span style="display:inline-block;margin:0 11px 2px 0">V=21</span><span style="display:inline-block;margin:0 11px 2px 0">W=22</span><span style="display:inline-block;margin:0 11px 2px 0">X=23</span><span style="display:inline-block;margin:0 11px 2px 0">Y=24</span><span style="display:inline-block;margin:0 11px 2px 0">Z=25</span></div><b style="color:var(--cy);font-size:.95rem">3 · Methode 1 — Rotor durchprobieren</b><br>Mit ◄ ► drehst du die Verschiebung von 0 bis 25 durch (es gibt nur 25 Möglichkeiten). Der Klartext über dem Rotor wird dabei live mitentschlüsselt – drehe, bis ein sinnvolles deutsches Wort erscheint. Stimmt es, wird das Schloss grün 🔓. Bei kurzen Wörtern ist das der schnellste Weg.<br><br><b style="color:var(--cy);font-size:.95rem">4 · Methode 2 — Häufigkeitsanalyse</b><br>Buchstaben kommen im Deutschen unterschiedlich häufig vor. Die häufigsten:<div style="margin:8px 0;padding:9px 11px;background:rgba(0,0,0,.35);border:.5px solid rgba(57,255,142,.25);border-radius:10px;font-family:var(--mo);font-size:.8rem;line-height:1.6;color:var(--ac)"><span style="display:inline-block;margin:0 13px 2px 0">E≈17%</span><span style="display:inline-block;margin:0 13px 2px 0">N≈10%</span><span style="display:inline-block;margin:0 13px 2px 0">I≈8%</span><span style="display:inline-block;margin:0 13px 2px 0">S≈7%</span><span style="display:inline-block;margin:0 13px 2px 0">R≈7%</span><span style="display:inline-block;margin:0 13px 2px 0">A≈6%</span><span style="display:inline-block;margin:0 13px 2px 0">T≈6%</span><span style="display:inline-block;margin:0 13px 2px 0">D≈5%</span></div>Der häufigste Buchstabe im Geheimtext ist deshalb sehr wahrscheinlich ein verschlüsseltes <b>E</b>. Der Abstand von diesem Buchstaben zurück zum E ergibt die Verschiebung:<div style="margin:8px 0;padding:7px 12px;background:rgba(0,0,0,.4);border:.5px solid rgba(57,255,142,.3);border-radius:10px;font-family:var(--mo);font-size:.82rem;color:var(--ac);font-weight:700">Verschiebung = (Position − 4 + 26) mod 26</div>(E hat Position 4; „mod 26“ heißt: liegt das Ergebnis über 25, ziehe 26 ab.)<br><br><b style="color:var(--cy);font-size:.95rem">5 · Muster als Abkürzung</b><br>• <b>Doppelbuchstaben bleiben doppelt:</b> steht im Geheimtext „LL“ oder „SS“, sind es auch im Klartext zwei gleiche Buchstaben.<br>• Typisch deutsche Endungen wie -UNG oder -EN und die Wortlänge helfen beim Raten.<br><br><b style="color:var(--cy);font-size:.95rem">6 · Beispiel zum Nachrechnen</b><br>Angenommen, die Verschiebung ist 5 und im Geheimtext steht ein „T“. T hat Position 19 → 19 − 5 = 14 → das ist <b>O</b>.<br>Mit Wrap-around: Geheimbuchstabe „B“ (Position 1), Verschiebung 5 → 1 − 5 = −4 → −4 + 26 = 22 → <b>W</b>.<br>Per Häufigkeitsanalyse: ist „L“ am häufigsten, gilt L = 11 → Verschiebung = 11 − 4 = 7. Stelle den Rotor auf 7, prüfe kurz, ob der ganze Text passt, und tippe den Klartext ein.')}
+      <div class="controls"><div class="pdots">${T.map((_,i)=>`<div class="pdot${i<ph?' dn':i===ph?' on':''}"></div>`).join('')}</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap">
+        <button class="rotbtn" onclick="r1(-1)">◄</button><div class="rotval" id="rv">${shift}</div><button class="rotbtn" onclick="r1(1)">►</button>
+        <input class="iip" id="i1" style="width:180px" placeholder="KLARTEXT" autocomplete="off"><button class="bt sm" onclick="c1()">ENTSCHLÜSSELN</button>
+      </div></div><div class="toast" id="toast"></div>`;app();const inp=document.getElementById('i1');inp.addEventListener('keydown',e=>{if(e.key==='Enter')c1()});setTimeout(()=>inp.focus(),100)}
+  window.r1=function(d){shift=(shift+d+26)%26;app();const rv=document.getElementById('rv');if(rv)rv.textContent=shift};
+  window.c1=function(){const v=document.getElementById('i1').value.trim().toUpperCase().replace(/\s+/g,'');if(v===T[ph].pl){toastOk('✔ "'+T[ph].pl+'" entschlüsselt');if(ph<T.length-1){ph++;G.mp[1]=ph;_sv();shift=0;setTimeout(render,1000)}else{setTimeout(()=>sP(1),1100)}}else{toast('✗ Nicht korrekt · −30s · drehe den Rotor & öffne den 💡 Tipp',false);aE()}};
+  render()}
+
+// ===== P2: KÜHLREAKTOR — reactor reacts live to coefficients =====
+function P2(){buildScene(2);const UI=document.getElementById('sceneUI');
+  const POOL=[{p:['H₂','O₂','H₂O'],at:{H:[2,0,2],O:[0,2,1]},nm:'Elektrolyse',st:'Knallgasgefahr bei falscher Stöchiometrie!'},
+    {p:['N₂','H₂','NH₃'],at:{N:[2,0,1],H:[0,2,3]},nm:'Ammoniaksynthese',st:'Druckreaktion außer Kontrolle!'},
+    {p:['Fe','O₂','Fe₂O₃'],at:{Fe:[1,0,2],O:[0,2,3]},nm:'Korrosion',st:'Unkontrollierte Oxidation zerstört die Hülle!'},
+    {p:['CH₄','O₂','CO₂','H₂O'],at:{C:[1,0,1,0],H:[4,0,0,2],O:[0,2,2,1]},nm:'Methanverbrennung',st:'Falsches Verhältnis = giftiges CO!'},
+    {p:['C₃H₈','O₂','CO₂','H₂O'],at:{C:[3,0,1,0],H:[8,0,0,2],O:[0,2,2,1]},nm:'Propanverbrennung',st:'Falsches Verhältnis = toxisches CO!'},
+    {p:['Al','O₂','Al₂O₃'],at:{Al:[1,0,2],O:[0,2,3]},nm:'Aluminothermie',st:'Extreme Hitzeentwicklung!'},
+    {p:['C₂H₆','O₂','CO₂','H₂O'],at:{C:[2,0,1,0],H:[6,0,0,2],O:[0,2,2,1]},nm:'Ethanverbrennung',st:'Rußbildung bei Sauerstoffmangel!'}];
+  const EQ=POOL.slice(0,G.nT);
+  let ph=G.mp[2]||0,co=[];function iC(){co=EQ[ph].p.map(()=>1)}iC();
+  function imbalance(){const eq=EQ[ph],isQ=eq.p.length===4;let err=0;for(const[,ct]of Object.entries(eq.at)){let l=0,r=0;ct.forEach((v,i)=>{if(i<2)l+=co[i]*v;else r+=co[i]*v});err+=Math.abs(l-r)}return err}
+  function balanced(){const eq=EQ[ph];for(const[,ct]of Object.entries(eq.at)){let l=0,r=0;ct.forEach((v,i)=>{if(i<2)l+=co[i]*v;else r+=co[i]*v});if(l!==r||l===0)return false}return true}
+  function app(){const eq=EQ[ph],isQ=eq.p.length===4;const bal=balanced(),err=imbalance();
+    const heat=bal?0:Math.min(1,err/8);const temp=bal?120:Math.round(300+heat*500);
+    const c=bal?'#10b981':heat<.4?'#f59e0b':'#ef4444';const lvl=bal?140:90;const bub=bal?4:Math.round(6+heat*12);
+    let ck='';for(const[a,ct]of Object.entries(eq.at)){let l=0,r=0;ct.forEach((v,i)=>{if(i<2)l+=co[i]*v;else r+=co[i]*v});const o=l===r&&l>0;ck+=`<span class="${o?'ok':'fl'}">${a}:&nbsp;${l}&nbsp;${o?'=':'≠'}&nbsp;${r}&nbsp;${o?'✓':'✗'}</span>&nbsp;&nbsp;&nbsp; `}
+    document.getElementById('appBox').innerHTML=`<svg class="appsvg" viewBox="0 0 640 380" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="gl"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <linearGradient id="liq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".4"/><stop offset="1" stop-color="${c}" stop-opacity=".12"/></linearGradient>
+      <linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e323b"/><stop offset="1" stop-color="#171a20"/></linearGradient>
+      <radialGradient id="cg"><stop offset="0" stop-color="${c}" stop-opacity=".4"/><stop offset="1" stop-color="transparent"/></radialGradient>
+      <clipPath id="vp"><rect x="250" y="62" width="140" height="226" rx="14"/></clipPath></defs>
+      <circle cx="320" cy="175" r="${130+heat*40}" fill="url(#cg)"><animate attributeName="r" values="${120+heat*30};${160+heat*50};${120+heat*30}" dur="${bal?'4s':(1.2-heat*.6)+'s'}" repeatCount="indefinite"/></circle>
+      <text x="320" y="42" text-anchor="middle" fill="var(--dm)" font-size="11" font-family="Courier New" letter-spacing="2">REAKTORKERN</text>
+      <rect x="240" y="52" width="160" height="246" rx="18" fill="url(#mg)" stroke="rgba(255,255,255,.08)" stroke-width="2.5"/>
+      <rect x="250" y="62" width="140" height="226" rx="14" fill="rgba(0,0,0,.3)"/>
+      <rect x="250" y="${288-lvl}" width="140" height="${lvl}" fill="url(#liq)" clip-path="url(#vp)"/>
+      ${Array.from({length:bub},(_,i)=>{const bx=262+Math.random()*116,bs=2.5+Math.random()*4.5;return `<circle cx="${bx}" cy="278" r="${bs}" fill="${c}" opacity=".3" clip-path="url(#vp)"><animate attributeName="cy" values="278;${298-lvl};278" dur="${(bal?2:.8-heat*.3)+i*.12}s" repeatCount="indefinite"/></circle>`}).join('')}
+      <!-- temp gauge -->
+      <rect x="470" y="52" width="54" height="246" rx="10" fill="url(#mg)" stroke="rgba(255,255,255,.06)"/>
+      <rect x="486" y="66" width="22" height="218" rx="5" fill="rgba(0,0,0,.4)"/>
+      <rect x="488" y="${66+218-Math.min(218,(temp/900)*218)}" width="18" height="${Math.min(218,(temp/900)*218)}" rx="4" fill="${c}"><animate attributeName="opacity" values=".6;1;.6" dur="${bal?'3s':'.6s'}" repeatCount="indefinite"/></rect>
+      <text x="497" y="322" text-anchor="middle" fill="${c}" font-size="19" font-family="Courier New" font-weight="700" filter="url(#gl)">${temp}°</text>
+      <text x="497" y="341" text-anchor="middle" fill="var(--dm)" font-size="10" font-family="Courier New">TEMP</text>
+      <!-- pressure -->
+      <circle cx="112" cy="160" r="62" fill="url(#mg)" stroke="rgba(255,255,255,.06)"/><circle cx="112" cy="160" r="48" fill="rgba(0,0,0,.4)"/>
+      ${Array.from({length:9},(_,i)=>{const a=(-135+i*33.75)*Math.PI/180;return `<line x1="${112+42*Math.cos(a)}" y1="${160+42*Math.sin(a)}" x2="${112+48*Math.cos(a)}" y2="${160+48*Math.sin(a)}" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>`}).join('')}
+      <line x1="112" y1="160" x2="${112+38*Math.cos((-135+heat*270)*Math.PI/180)}" y2="${160+38*Math.sin((-135+heat*270)*Math.PI/180)}" stroke="${c}" stroke-width="3" stroke-linecap="round" filter="url(#gl)"/><circle cx="112" cy="160" r="6" fill="${c}"/>
+      <text x="112" y="246" text-anchor="middle" fill="var(--dm)" font-size="11" font-family="Courier New">DRUCK</text>
+      <!-- status -->
+      <text x="320" y="348" text-anchor="middle" fill="${c}" font-size="18" font-family="Orbitron,sans-serif" font-weight="700" letter-spacing="2" filter="url(#gl)">${bal?'✓ KERN STABIL':'⚠ INSTABIL'}</text>
+      <text x="320" y="370" text-anchor="middle" fill="var(--dm)" font-size="11" font-family="Courier New">${eq.nm.toUpperCase()}</text>
+    </svg>`;
+    const cd=document.getElementById('ckdisp');if(cd)cd.innerHTML=ck}
+  function render(){const eq=EQ[ph],isQ=eq.p.length===4;
+    UI.innerHTML=`<div class="app-hint">Reaktion ${ph+1}/${EQ.length} | stelle die Koeffizienten ein — der Reaktor reagiert sofort</div>
+      <div class="appwrap"><div id="appBox" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center"></div></div>
+      ${hintHTML('Massenerhaltung','','Bei einer chemischen Reaktion bleibt die Anzahl der Atome jedes Elements erhalten. Zähle für jedes Element die Atome links und rechts und passe die Koeffizienten an, bis beide Seiten übereinstimmen. Die Atombilanz unten zeigt dir live, welches Element noch nicht stimmt.')}
+      <div class="controls"><div class="pdots">${EQ.map((_,i)=>`<div class="pdot${i<ph?' dn':i===ph?' on':''}"></div>`).join('')}</div>
+        <div style="display:flex;align-items:flex-end;justify-content:center;gap:8px;flex-wrap:wrap">
+        ${eq.p.map((p,i)=>{let s='';if(i===2)s='<span style="color:var(--dm);font-size:1.5rem;margin:0 6px 14px">→</span>';else if(i>0)s='<span style="color:var(--dm);font-size:1.2rem;margin:0 4px 14px">+</span>';return s+`<div style="display:flex;align-items:flex-end;gap:6px"><div class="cstep"><button class="cstepb" onclick="p2u(${i},1)">+</button><div class="nx" id="nx${i}" onclick="p2u(${i},1)">${co[i]}</div><button class="cstepb" onclick="p2u(${i},-1)">−</button></div><span style="font-size:1.2rem;color:var(--br);margin-bottom:26px;font-weight:600">${p}</span></div>`}).join('')}
+        </div><div style="text-align:center;margin-top:6px"><div style="font-size:.66rem;color:var(--dm);letter-spacing:.08em;margin-bottom:3px;text-transform:uppercase">Atombilanz · links = rechts?</div><div class="sdisp" id="ckdisp"></div><button class="bt sm" onclick="p2s()" style="margin-top:8px">Reaktion prüfen</button></div></div>
+      <div class="toast" id="toast"></div>`;app()}
+  window.p2u=function(i,d){co[i]=Math.max(1,Math.min(9,co[i]+d));const el=document.getElementById('nx'+i);if(el)el.textContent=co[i];app()};
+  window.p2c=function(i){co[i]=co[i]%9+1;const el=document.getElementById('nx'+i);if(el)el.textContent=co[i];app()};
+  window.p2s=function(){if(balanced()){toastOk('✔ '+EQ[ph].nm+' ausgeglichen — Kern stabilisiert');setTimeout(()=>{if(ph<EQ.length-1){ph++;G.mp[2]=ph;_sv();iC();render()}else{sP(2)}},1300)}else{toast('✗ Unkontrollierte Reaktion! (−30s)',false);aE();app()}};render()}
+
+// ===== P3: PEILSENDER — live marker on radar grid =====
+function P3(){buildScene(3);const UI=document.getElementById('sceneUI');let ph=G.mp[3]||0,mx=null,my=null;
+  const POOL=[
+    {mode:'dist',pts:[[0,0],[3,4]],ans:[5],tol:.1,lbl:'DISTANZ A→B',fm:'d = √(Δx² + Δy²)',mt:'Δx und Δy sind die Differenzen der x- bzw. y-Koordinaten beider Punkte. Setze sie in den Satz des Pythagoras ein: d = √(Δx² + Δy²).',h:'√(3²+4²)=√25=5'},
+    {mode:'dist',pts:[[3,4],[7,1]],ans:[5],tol:.1,lbl:'DISTANZ A→B',fm:'d = √(Δx² + Δy²)',mt:'Δx und Δy sind die Differenzen der x- bzw. y-Koordinaten beider Punkte. Setze sie in den Satz des Pythagoras ein: d = √(Δx² + Δy²).',h:'√(4²+3²)=√25=5'},
+    {mode:'pt',pts:[[-10,6],[4,-8]],ans:[-3,-1],tol:.3,lbl:'MITTELPUNKT A↔B',fm:'M = ((x₁+x₂)/2, (y₁+y₂)/2)',mt:'Der Mittelpunkt liegt genau zwischen beiden Punkten: bilde getrennt den Durchschnitt der x- und der y-Werte.',h:'M=((−10+4)/2,(6−8)/2)=(−3,−1)'},
+    {mode:'pt',pts:[[-8,2],[6,-8]],ans:[-1,-3],tol:.3,lbl:'MITTELPUNKT A↔B',fm:'M = ((x₁+x₂)/2, (y₁+y₂)/2)',mt:'Der Mittelpunkt liegt genau zwischen beiden Punkten: bilde getrennt den Durchschnitt der x- und der y-Werte.',h:'M=((−8+6)/2,(2−8)/2)=(−1,−3)'},
+    {mode:'pt',lines:[[2,1],[-1,7]],ans:[2,5],tol:.2,lbl:'SCHNITTPUNKT DER PEILLINIEN',fm:'2x+1 = −x+7',mt:'Im Schnittpunkt sind beide y gleich. Setze die rechten Seiten gleich, löse nach x auf und setze x dann in eine der Gleichungen ein, um y zu erhalten.',h:'2x+1=−x+7 → x=2, y=5'},
+    {mode:'pt',lines:[[3,-2],[-1,6]],ans:[2,4],tol:.2,lbl:'SCHNITTPUNKT DER PEILLINIEN',fm:'3x−2 = −x+6',mt:'Im Schnittpunkt sind beide y gleich. Setze die rechten Seiten gleich, löse nach x auf und setze x dann in eine der Gleichungen ein, um y zu erhalten.',h:'3x−2=−x+6 → x=2, y=4'},
+    {mode:'pt',lines:[[0.5,1],[-2,11]],ans:[4,3],tol:.2,lbl:'SCHNITTPUNKT DER PEILLINIEN',fm:'0,5x+1 = −2x+11',mt:'Im Schnittpunkt sind beide y gleich. Setze die rechten Seiten gleich, löse nach x auf und setze x dann in eine der Gleichungen ein, um y zu erhalten.',h:'0,5x+1=−2x+11 → x=4, y=3'}];
+  const T=POOL.slice(0,G.nT);
+  const X0=-12,X1=8,Y0=-10,Y1=8,W=440,H=380,PX=40,PY=20;
+  function sx(x){return PX+(x-X0)/(X1-X0)*(W-PX-10)}function sy(y){return PY+(Y1-y)/(Y1-Y0)*(H-PY-30)}
+  function app(){const t=T[ph];
+    let extra='';
+    if(t.mode==='dist'){const[a,b]=t.pts;const dx=Math.abs(b[0]-a[0]),dy=Math.abs(b[1]-a[1]);extra=`<line x1="${sx(a[0])}" y1="${sy(a[1])}" x2="${sx(b[0])}" y2="${sy(b[1])}" stroke="#39ff8e" stroke-width="2" stroke-dasharray="5,3"/>
+      <line x1="${sx(a[0])}" y1="${sy(a[1])}" x2="${sx(b[0])}" y2="${sy(a[1])}" stroke="#22d3ee" stroke-width="1.5" opacity=".6"/><line x1="${sx(b[0])}" y1="${sy(a[1])}" x2="${sx(b[0])}" y2="${sy(b[1])}" stroke="#22d3ee" stroke-width="1.5" opacity=".6"/>
+      <text x="${(sx(a[0])+sx(b[0]))/2}" y="${sy(a[1])+16}" fill="#22d3ee" font-size="11" font-family="Courier New" text-anchor="middle">Δx=${dx}</text>
+      <text x="${sx(b[0])+14}" y="${(sy(a[1])+sy(b[1]))/2}" fill="#22d3ee" font-size="11" font-family="Courier New">Δy=${dy}</text>`}
+    if(t.lines){extra=t.lines.map((ln,i)=>{const x0=X0,y0=ln[0]*x0+ln[1],x1=X1,y1=ln[0]*x1+ln[1];return `<line x1="${sx(x0)}" y1="${sy(y0)}" x2="${sx(x1)}" y2="${sy(y1)}" stroke="${i?'#f59e0b':'#22d3ee'}" stroke-width="2" opacity=".8"/>`}).join('')}
+    const pts=t.pts||[];
+    document.getElementById('appBox').innerHTML=`<svg class="appsvg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="gl"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <rect x="0" y="0" width="${W}" height="${H}" rx="10" fill="rgba(2,8,14,.55)" stroke="rgba(34,211,238,.15)"/>
+      ${Array.from({length:(X1-X0)/2+1},(_,i)=>{const x=sx(X0+i*2);return `<line x1="${x}" y1="${PY}" x2="${x}" y2="${H-30}" stroke="rgba(255,255,255,.05)"/>`}).join('')}
+      ${Array.from({length:(Y1-Y0)/2+1},(_,i)=>{const y=sy(Y0+i*2);return `<line x1="${PX}" y1="${y}" x2="${W-10}" y2="${y}" stroke="rgba(255,255,255,.05)"/>`}).join('')}
+      <line x1="${sx(0)}" y1="${PY}" x2="${sx(0)}" y2="${H-30}" stroke="rgba(255,255,255,.18)"/><line x1="${PX}" y1="${sy(0)}" x2="${W-10}" y2="${sy(0)}" stroke="rgba(255,255,255,.18)"/>
+      ${extra}
+      ${pts.map((p,i)=>`<circle cx="${sx(p[0])}" cy="${sy(p[1])}" r="6" fill="${i?'#f59e0b':'#39ff8e'}" filter="url(#gl)"><animate attributeName="r" values="5;8;5" dur="2s" repeatCount="indefinite"/></circle><text x="${sx(p[0])}" y="${sy(p[1])-12}" text-anchor="middle" fill="${i?'#f59e0b':'#39ff8e'}" font-size="11" font-family="Courier New">${String.fromCharCode(65+i)}(${p[0]},${p[1]})</text>`).join('')}
+      ${(t.mode==='pt'&&mx!==null&&my!==null)?`<circle cx="${sx(mx)}" cy="${sy(my)}" r="9" fill="none" stroke="#39ff8e" stroke-width="2.5" filter="url(#gl)"><animate attributeName="r" values="7;12;7" dur="1s" repeatCount="indefinite"/></circle><line x1="${sx(mx)-14}" y1="${sy(my)}" x2="${sx(mx)+14}" y2="${sy(my)}" stroke="#39ff8e" stroke-width="1.5"/><line x1="${sx(mx)}" y1="${sy(my)-14}" x2="${sx(mx)}" y2="${sy(my)+14}" stroke="#39ff8e" stroke-width="1.5"/><text x="${sx(mx)}" y="${sy(my)+26}" text-anchor="middle" fill="#39ff8e" font-size="10" font-family="Courier New">(${mx},${my})</text>`:''}
+    </svg>`}
+  function render(){const t=T[ph];
+    UI.innerHTML=`<div class="app-hint">Peilung ${ph+1}/${T.length} | ${t.mode==='dist'?'lies die Katheten (Δx, Δy) ab und berechne die Distanz':'gib die Koordinaten ein — die Markierung erscheint live im Raster'}</div>
+      <div class="appwrap"><div id="appBox" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center"></div></div>
+      ${hintHTML(t.lbl,t.fm,t.mt)}
+      <div class="controls"><div class="pdots">${T.map((_,i)=>`<div class="pdot${i<ph?' dn':i===ph?' on':''}"></div>`).join('')}</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">
+        ${t.mode==='dist'?`<span style="color:#aeb8c4;font-size:1.05rem;font-family:var(--ui);font-weight:500">d =</span><input class="iip" id="i3" autocomplete="off" style="width:65px"><button class="bt sm" onclick="c3()">PEILEN</button>`
+        :`<span style="color:#aeb8c4;font-size:1.05rem;font-family:var(--ui);font-weight:500">x=</span><input class="iip" id="i3x" style="width:55px" autocomplete="off" inputmode="numeric"><span style="color:#aeb8c4;font-size:1.05rem;font-family:var(--ui);font-weight:500">y=</span><input class="iip" id="i3y" style="width:55px" autocomplete="off" inputmode="numeric"><button class="bt sm" onclick="c3()">PEILEN</button>`}
+        </div></div><div class="toast" id="toast"></div>`;
+    app();
+    if(t.mode==='dist'){const inp=document.getElementById('i3');inp.addEventListener('keydown',e=>{if(e.key==='Enter')c3()});setTimeout(()=>inp.focus(),100)}
+    else{const ix=document.getElementById('i3x'),iy=document.getElementById('i3y');const upd=()=>{mx=parseFloat(ix.value.replace(',','.'));my=parseFloat(iy.value.replace(',','.'));if(isNaN(mx))mx=null;if(isNaN(my))my=null;app()};ix.addEventListener('input',upd);iy.addEventListener('input',upd);ix.addEventListener('keydown',e=>{if(e.key==='Enter')iy.focus()});iy.addEventListener('keydown',e=>{if(e.key==='Enter')c3()});setTimeout(()=>ix.focus(),100)}}
+  window.c3=function(){const t=T[ph];const adv=()=>{if(ph<T.length-1){ph++;G.mp[3]=ph;_sv();mx=my=null;setTimeout(render,900)}else{setTimeout(()=>sP(3),900)}};
+    if(t.mode==='dist'){const v=parseFloat(document.getElementById('i3').value.replace(',','.'));if(Math.abs(v-t.ans[0])<=t.tol){toastOk('✔ '+t.h);adv()}else{toast('✗ Nicht korrekt · −30s · öffne den 💡 Tipp',false);aE()}}
+    else{if(mx!==null&&my!==null&&Math.abs(mx-t.ans[0])<=t.tol&&Math.abs(my-t.ans[1])<=t.tol){toastOk('✔ '+t.h);adv()}else{toast('✗ Nicht korrekt · −30s · öffne den 💡 Tipp',false);aE()}}};
+  render()}
+
+// ===== P4: FUNKSTATION — blinking lamp + bit switches =====
+function P4(){buildScene(4);const UI=document.getElementById('sceneUI');
+  const MT={'A':'.-','B':'-...','C':'-.-.','D':'-..','E':'.','F':'..-.','G':'--.','H':'....','I':'..','J':'.---','K':'-.-','L':'.-..','M':'--','N':'-.','O':'---','P':'.--.','Q':'--.-','R':'.-.','S':'...','T':'-','U':'..-','V':'...-','W':'.--','X':'-..-','Y':'-.--','Z':'--..'};
+  const POOL=[{type:'morse',word:'SOS'},{type:'morse',word:'EIS'},{type:'morse',word:'FUNK'},{type:'morse',word:'KRISTALL'},{type:'bin',dec:11},{type:'bin',dec:42},{type:'bin',dec:75,letter:'K'}];
+  const T=POOL.slice(0,G.nT);const BV=[64,32,16,8,4,2,1];
+  let ph=G.mp[4]||0,lamp=false,wave=0,playing=false,bits=[0,0,0,0,0,0,0];
+  function app(){const t=T[ph];
+    if(t.type==='morse'){const c=lamp?'#39ff8e':'#1a3a2a';
+      document.getElementById('appBox').innerHTML=`<svg class="appsvg" viewBox="0 0 440 340" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="gl"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e323b"/><stop offset="1" stop-color="#171a20"/></linearGradient></defs>
+      <rect x="20" y="30" width="400" height="220" rx="12" fill="url(#mg)" stroke="rgba(255,255,255,.06)" stroke-width="2"/>
+      <rect x="40" y="55" width="240" height="120" rx="6" fill="#040810" stroke="rgba(57,255,142,.15)"/>
+      <polyline points="${Array.from({length:48},(_,i)=>{const x=46+i*5;const y=115+Math.sin(i*.5+wave)*(lamp?34:3);return x+','+y}).join(' ')}" fill="none" stroke="${lamp?'#39ff8e':'rgba(255,255,255,.1)'}" stroke-width="2"/>
+      <circle cx="350" cy="115" r="46" fill="url(#mg)" stroke="rgba(255,255,255,.06)" stroke-width="2"/>
+      <circle cx="350" cy="115" r="34" fill="${c}" stroke="#39ff8e" stroke-width="2" filter="${lamp?'url(#gl)':''}"/>
+      ${lamp?`<circle cx="350" cy="115" r="50" fill="none" stroke="#39ff8e" stroke-width="1" opacity=".15"><animate attributeName="r" values="40;58" dur=".4s" repeatCount="indefinite"/></circle>`:''}
+      <text x="350" y="180" text-anchor="middle" fill="var(--dm)" font-size="8" font-family="Courier New">SIGNALLAMPE</text>
+      <text x="160" y="215" text-anchor="middle" fill="${playing?'#39ff8e':'var(--dm)'}" font-size="10" font-family="Courier New" letter-spacing="2">${playing?'● EMPFANG LÄUFT':'○ BEREIT'}</text>
+    </svg>`}
+    else{const dec=bits.reduce((s,b,i)=>s+b*BV[i],0),ok=dec===t.dec;
+      document.getElementById('appBox').innerHTML=`<svg class="appsvg" viewBox="0 0 440 200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="20" width="400" height="120" rx="10" fill="rgba(2,8,14,.5)" stroke="rgba(57,255,142,.12)"/>
+      <text x="220" y="50" text-anchor="middle" fill="var(--dm)" font-size="10" font-family="Courier New" letter-spacing="2">ZIEL: ${t.letter?t.letter+' = ':''}${t.dec}\u2081\u2080 = ? \u2082</text>
+      <text x="220" y="100" text-anchor="middle" fill="${ok?'#10b981':'#f59e0b'}" font-size="34" font-family="Courier New" font-weight="900">${bits.join('')}</text>
+      <text x="220" y="128" text-anchor="middle" fill="${ok?'#10b981':'var(--dm)'}" font-size="12" font-family="Courier New">= ${dec}\u2081\u2080 ${ok?'\u2713':''}</text>
+    </svg>`}}
+  function render(){const t=T[ph];const pd=`<div class="pdots">${T.map((_,i)=>`<div class="pdot${i<ph?' dn':i===ph?' on':''}"></div>`).join('')}</div>`;
+    if(t.type==='morse'){UI.innerHTML=`<div class="app-hint">Funkspruch ${ph+1}/${T.length} | spiel das Signal ab und lies den Morsecode von der Lampe</div>
+      <div class="appwrap"><div id="appBox" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center"></div></div>
+      ${hintHTML('Morsecode','','Kurzes Blinken = Punkt (\u00b7), langes Blinken = Strich (\u2212). Eine kurze Pause trennt die Buchstaben. Spiel das Signal beliebig oft ab, notiere die Punkte und Striche je Buchstabe und vergleiche sie mit der Tabelle:<div style="margin-top:8px;font-family:var(--mo);font-size:.85rem;line-height:1.7">'+Object.entries(MT).map(([l,c])=>`<b style="color:var(--ac)">${l}</b> ${c}`).join('&nbsp;&nbsp; ')+'</div>')}
+      <div class="controls">${pd}<div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">
+        <button class="bt sm" onclick="p4p()">\u25b6 SIGNAL ABSPIELEN</button>
+        <input class="iip" id="i4" placeholder="WORT" style="width:150px" autocomplete="off"><button class="bt sm" onclick="c4a()">DEKODIEREN</button>
+      </div></div><div class="toast" id="toast"></div>`;app();const inp=document.getElementById('i4');inp.addEventListener('keydown',e=>{if(e.key==='Enter')c4a()});setTimeout(()=>inp.focus(),100);}
+    else{UI.innerHTML=`<div class="app-hint">Funkspruch ${ph+1}/${T.length} | stelle die Bit-Schalter so, dass die Dezimalzahl ${t.dec} entsteht</div>
+      <div class="appwrap" style="flex-direction:column;gap:18px"><div id="appBox" style="width:100%;flex:1;min-height:0;display:flex;align-items:center;justify-content:center"></div>
+        <div style="display:flex;gap:8px;justify-content:center;flex-shrink:0">${BV.map((v,i)=>`<div class="bitsw${bits[i]?' on':''}" onclick="p4b(${i})"><div class="bl">${v}</div><div class="knob"></div><div class="bv">${bits[i]}</div></div>`).join('')}</div>
+      </div>
+      ${hintHTML('ASCII \u2192 Bin\u00e4r','','Jeder Schalter steht f\u00fcr eine Zweierpotenz: 64, 32, 16, 8, 4, 2, 1. Gesucht ist die Kombination, die zusammen genau '+t.dec+' ergibt. Geh von links nach rechts: nimm die gr\u00f6\u00dfte Potenz, die noch in die Zahl passt, ziehe sie ab und mach mit dem Rest weiter. Die Dezimalsumme wird dir live angezeigt.'+(t.letter?'<br><br>Hinweis: '+t.dec+' ist zugleich der ASCII-Code des Buchstabens \u201e'+t.letter+'\u201c.':''))}
+      <div class="controls">${pd}<div style="text-align:center"><button class="bt sm" onclick="c4b()">SIGNAL SENDEN</button></div></div><div class="toast" id="toast"></div>`;app();}}
+  function adv(){if(_stopAnim)_stopAnim();if(ph<T.length-1){ph++;G.mp[4]=ph;_sv();bits=[0,0,0,0,0,0,0];lamp=false;playing=false;render()}else{sP(4)}}
+  window.p4p=function(){if(playing)return;const MSG=T[ph].word;if(!MSG)return;playing=true;const seq=[];for(let i=0;i<MSG.length;i++){const cd=MT[MSG[i]];for(const ch of cd){seq.push({on:1,d:ch==='.'?200:520});seq.push({on:0,d:200})}seq.push({on:0,d:400})}
+    let i=0,cancelled=false;_stopAnim=function(){cancelled=true;playing=false;if(_animTimer){clearTimeout(_animTimer);_animTimer=null}};
+    app();(function st(){if(cancelled)return;if(i>=seq.length){lamp=false;playing=false;app();_stopAnim=null;return}lamp=!!seq[i].on;wave+=.5;app();const d=seq[i].d;i++;_animTimer=setTimeout(st,d)})()};
+  window.p4b=function(i){bits[i]=bits[i]?0:1;app();const el=document.querySelectorAll('.bitsw')[i];if(el){el.classList.toggle('on',!!bits[i]);el.querySelector('.bv').textContent=bits[i]}};
+  window.c4a=function(){const v=document.getElementById('i4').value.trim().toUpperCase().replace(/\s+/g,'');if(v===T[ph].word){toastOk('\u2714 Signal dekodiert: "'+T[ph].word+'" \u2014 korrekt empfangen!');setTimeout(adv,1200)}else{toast('\u2717 Nicht korrekt \u00b7 \u221230s \u00b7 spiel das Signal erneut ab',false);aE()}};
+  window.c4b=function(){const dec=bits.reduce((s,b,i)=>s+b*BV[i],0);const t=T[ph];if(dec===t.dec){toastOk('\u2714 Korrekt! '+bits.join('')+'\u2082 = '+t.dec+(t.letter?' = "'+t.letter+'"':'')+' \u2014 Signal gesendet');setTimeout(adv,1200)}else{toast('\u2717 '+dec+' \u2260 '+t.dec+' \u00b7 \u221230s',false);aE()}};
+  render()}
+
+// ===== P5: SENSORIK — reactive bar chart + anomaly table =====
+function P5(){buildScene(5);const UI=document.getElementById('sceneUI');
+  const D=[-28.4,-27.1,-31.2,-33.5,14.7,-35.8,-36.1,-34.2,-30.5,-28.9,-29.3,-27.8];
+  const LG=[{id:1,t:'12.03 08:00',tp:-28.4,n:'Normal'},{id:2,t:'12.03 14:00',tp:-27.1,n:'Wind\u2191'},{id:3,t:'12.03 20:00',tp:-31.2,n:'Sturm naht'},{id:4,t:'13.03 02:00',tp:-33.5,n:'Sturm'},{id:5,t:'13.03 08:00',tp:14.7,n:'Normal?'},{id:6,t:'13.03 14:00',tp:-35.8,n:'Evakuierung'},{id:7,t:'13.03 20:00',tp:-36.1,n:'Evakuiert'},{id:8,t:'14.03 02:00',tp:-34.2,n:'Versiegelt'},{id:9,t:'14.03 08:00',tp:-30.5,n:'\u2588 GEL\u00d6SCHT \u2588'},{id:10,t:'14.03 14:00',tp:-28.9,n:'Sturm endet'},{id:11,t:'14.03 20:00',tp:-29.3,n:'Normal'},{id:12,t:'15.03 08:00',tp:-27.8,n:'Auto-Sys'},{id:13,t:'\u2588\u2588.\u2588\u2588 \u2588\u2588:\u2588\u2588',tp:-26.4,n:'Manuell: reaktiviert'}];
+  const AN=new Set([5,9,13]);
+  const POOL=[
+    {type:'num',tag:'mean',lbl:'MITTELWERT \u03bc',fm:'\u03bc = \u03a3x\u1d62 / n',mt:'Addiere alle 12 Messwerte und teile die Summe durch 12. Achtung: ein einzelner Ausrei\u00dfer verschiebt den Mittelwert deutlich.',pre:'\u03bc \u2248',u:'\u00b0C',ans:-27.3,tol:1.2,em:'\u2717 Summe \u00f7 12'},
+    {type:'num',lbl:'MEDIAN',fm:'mittlerer Wert der sortierten Reihe',mt:'Sortiere alle 12 Werte der Gr\u00f6\u00dfe nach. Bei einer geraden Anzahl ist der Median der Durchschnitt der beiden mittleren Werte (6. und 7. Wert). Anders als der Mittelwert ist der Median unempfindlich gegen Ausrei\u00dfer.',pre:'x\u0303 \u2248',u:'\u00b0C',ans:-29.9,tol:0.6,em:'\u2717 sortieren, Mitte nehmen'},
+    {type:'num',lbl:'SPANNWEITE',fm:'R = max \u2212 min',mt:'Die Spannweite ist die Differenz zwischen dem gr\u00f6\u00dften und dem kleinsten Messwert. Lies beide Extremwerte aus dem Diagramm ab und bilde die Differenz.',pre:'R =',u:'\u00b0C',ans:50.8,tol:0.6,em:'\u2717 max \u2212 min'},
+    {type:'num',tag:'sigma',lbl:'STANDARDABWEICHUNG \u03c3',fm:'\u03c3 = \u221a(\u03a3(x\u1d62\u2212\u03bc)\u00b2/n)',mt:'Berechne f\u00fcr jeden Wert die Abweichung vom Mittelwert, quadriere sie, bilde den Durchschnitt dieser Quadrate (= Varianz) und ziehe daraus die Wurzel. Der Ausrei\u00dfer l\u00e4sst \u03c3 deutlich ansteigen.',pre:'\u03c3 \u2248',u:'\u00b0C',ans:13,tol:1,em:'\u2717 Wurzel der Varianz'},
+    {type:'mark',lbl:'AUSREISSER (2\u03c3-Regel)',fm:'|x \u2212 \u03bc| > 2\u03c3',mt:'Nach der 2\u03c3-Regel ist alles ein Ausrei\u00dfer, was weiter als zwei Standardabweichungen vom Mittelwert entfernt liegt. Pr\u00fcfe zus\u00e4tzlich die Tabelle auf gel\u00f6schte oder unplausible Eintr\u00e4ge (z. B. fehlende oder unm\u00f6gliche Zeitstempel).'},
+    {type:'num',lbl:'VARIANZ \u03c3\u00b2',fm:'\u03c3\u00b2 = \u03a3(x\u1d62\u2212\u03bc)\u00b2/n',mt:'Die Varianz ist der Durchschnitt der quadrierten Abweichungen vom Mittelwert \u2014 also das Quadrat der Standardabweichung. Wenn du \u03c3 schon kennst: \u03c3\u00b2 = \u03c3 \u00b7 \u03c3.',pre:'\u03c3\u00b2 \u2248',u:'',ans:169,tol:22,em:'\u2717 \u03c3\u00b2 = \u03c3 \u00b7 \u03c3'},
+    {type:'num',lbl:'OBERE 2\u03c3-GRENZE',fm:'\u03bc + 2\u03c3',mt:'Der normale Bereich liegt zwischen \u03bc \u2212 2\u03c3 und \u03bc + 2\u03c3. Berechne die obere Grenze \u03bc + 2\u03c3 \u2014 jeder Wert dar\u00fcber gilt als Ausrei\u00dfer.',pre:'\u2248',u:'\u00b0C',ans:-1.3,tol:3,em:'\u2717 \u03bc + 2\u00b7\u03c3'}
+  ];
+  const T=POOL.slice(0,G.nT);
+  let ph=G.mp[5]||0,sel=new Set();const _mi=T.findIndex(t=>t.tag==='mean'),_si=T.findIndex(t=>t.tag==='sigma');let mDone=_mi>=0&&ph>_mi,sDone=_si>=0&&ph>_si;
+  const mn=-44,mx=20,rng=mx-mn,W=600,H=340,PX=44,PY=22,bw=(W-PX-12)/12;
+  function by(v){return PY+(mx-v)/rng*(H-PY-52)}
+  function app(){const isMark=T[ph].type==='mark';
+    document.getElementById('appBox').innerHTML=`<svg class="appsvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="gl"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <rect x="0" y="0" width="${W}" height="${H}" rx="12" fill="rgba(2,8,14,.55)" stroke="rgba(57,255,142,.12)"/>
+      ${[0,-20,-40].map(v=>`<line x1="${PX}" y1="${by(v)}" x2="${W-10}" y2="${by(v)}" stroke="rgba(255,255,255,.06)"/><text x="${PX-6}" y="${by(v)+4}" text-anchor="end" fill="#9aa6b4" font-size="11" font-family="Courier New">${v}\u00b0</text>`).join('')}
+      ${sDone?`<rect x="${PX}" y="${by(-1.3)}" width="${W-PX-10}" height="${by(-53.3)-by(-1.3)}" fill="#39ff8e" opacity=".06"/><text x="${W-14}" y="${by(-1.3)-4}" text-anchor="end" fill="#22d3ee" font-size="10" font-family="Courier New">2\u03c3-Band</text>`:''}
+      ${D.map((v,i)=>{const isAn=sel.has(i+1),isOut=v>0,cx=PX+i*bw+bw/2,top=v>=0?by(v):by(0),hh=Math.abs(by(v)-by(0)),col=isOut?'#ef4444':isAn?'#f59e0b':'#39ff8e';
+        return `<rect x="${PX+i*bw+3}" y="${top}" width="${bw-6}" height="${Math.max(2,hh)}" rx="3" fill="${col}" opacity="${isOut?.85:isAn?.9:.5}"${isMark?` style="cursor:pointer" onclick="p5t(${i+1})"`:''}>${isOut&&isMark?`<animate attributeName="opacity" values=".85;.45;.85" dur="1s" repeatCount="indefinite"/>`:''}</rect>
+        <text x="${cx}" y="${H-30}" text-anchor="middle" fill="${isOut?'#ff8585':'#e2e9f0'}" font-size="11.5" font-family="Courier New" font-weight="700">${v>0?'+':''}${v}</text>
+        <text x="${cx}" y="${H-12}" text-anchor="middle" fill="${isAn?'#f59e0b':'var(--dm)'}" font-size="9.5" font-family="Courier New">#${i+1}</text>`}).join('')}
+      <line x1="${PX}" y1="${by(0)}" x2="${W-10}" y2="${by(0)}" stroke="rgba(255,255,255,.18)"/>
+      ${mDone?`<line x1="${PX}" y1="${by(-27.3)}" x2="${W-10}" y2="${by(-27.3)}" stroke="#39ff8e" stroke-width="1.5" stroke-dasharray="6,4" filter="url(#gl)"/><text x="${W-14}" y="${by(-27.3)-5}" text-anchor="end" fill="#39ff8e" font-size="11" font-family="Courier New" font-weight="700">\u03bc\u2248\u221227,3\u00b0C</text>`:''}
+    </svg>`}
+  function render(){const t=T[ph];const pd=`<div class="pdots">${T.map((_,i)=>`<div class="pdot${i<ph?' dn':i===ph?' on':''}"></div>`).join('')}</div>`;
+    UI.innerHTML=`<div class="app-hint">Messung ${ph+1}/${T.length} | ${t.type==='mark'?'markiere die 3 Anomalien (Balken oder Tabelle anklicken)':'berechne: '+t.lbl}</div>
+      <div class="appwrap"><div id="appBox" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center"></div></div>
+      ${hintHTML(t.lbl,t.fm,t.mt)}
+      ${t.type!=='mark'?`<div class="controls">${pd}<div style="display:flex;align-items:center;justify-content:center;gap:10px"><span style="color:#aeb8c4;font-size:1.05rem;font-family:var(--ui);font-weight:500">${t.pre}</span><input class="iip" id="i5" style="width:70px" autocomplete="off" inputmode="decimal">${t.u?`<span style="color:#aeb8c4;font-size:1.05rem;font-family:var(--ui);font-weight:500">${t.u}</span>`:''}<button class="bt sm" onclick="c5n()">BERECHNEN</button></div></div>`
+      :`<div class="controls">${pd}<div style="max-width:440px;margin:0 auto"><div class="lw"><table class="ltb"><thead><tr><th>ID</th><th>Zeit</th><th>\u00b0C</th><th>Notiz</th></tr></thead><tbody id="tb5"></tbody></table></div><div style="text-align:center;margin-top:6px"><span style="font-size:.6rem;color:var(--dm)">Markiert: <b style="color:var(--warn)" id="selc">0</b>/3</span> &nbsp;<button class="bt sm" onclick="c5m()">ANOMALIEN BEST\u00c4TIGEN</button></div></div></div>`}
+      <div class="toast" id="toast"></div>`;
+    app();if(t.type!=='mark'){const inp=document.getElementById('i5');inp.addEventListener('keydown',e=>{if(e.key==='Enter')c5n()});setTimeout(()=>inp.focus(),100)}else rT5()}
+  function rT5(){const tb=document.getElementById('tb5');if(tb)tb.innerHTML=LG.map(l=>`<tr class="${sel.has(l.id)?'sl':''}" onclick="p5t(${l.id})"><td>#${l.id}</td><td>${l.t}</td><td style="font-family:var(--mo)">${l.tp>0?'+':''}${l.tp}\u00b0</td><td>${l.n}</td></tr>`).join('');const sc=document.getElementById('selc');if(sc)sc.textContent=sel.size}
+  function adv(){if(ph<T.length-1){ph++;G.mp[5]=ph;_sv();render()}else{setTimeout(()=>sP(5),300)}}
+  window.p5t=function(id){if(T[ph].type!=='mark')return;sel.has(id)?sel.delete(id):sel.add(id);app();rT5()};
+  window.c5n=function(){const t=T[ph];const v=parseFloat((document.getElementById('i5').value||'').replace(',','.'));if(isNaN(v)){toast('Gib einen Wert ein.',false);return}if(Math.abs(v-t.ans)<=t.tol){if(t.tag==='mean')mDone=true;if(t.tag==='sigma')sDone=true;toastOk('\u2714 '+t.lbl+' korrekt');setTimeout(adv,1200)}else{toast(t.em+' \u00b7 \u221230s \u00b7 \u00f6ffne den \ud83d\udca1 Tipp',false);aE()}};
+  window.c5m=function(){if(sel.size===3&&[...sel].every(id=>AN.has(id))){toastOk('\u2714 #5 Ausrei\u00dfer \u00b7 #9 gel\u00f6scht \u00b7 #13 korrupt \u2014 Manipulation best\u00e4tigt');setTimeout(adv,1500)}else{toast('\u2717 Genau 3 echte Anomalien markieren! (\u221230s)',false);aE()}};
+  render()}
+
+// INIT
+boot();
+</script>
+</body>
+</html>
